@@ -1,4 +1,2 @@
-cd dev/MyRuns
-#celery -A MyRuns worker --loglevel=info
-celery -A MyRuns worker 
-
+celery --app MyRuns worker --loglevel info --concurrency 4 --detach
+gunicorn app:app
