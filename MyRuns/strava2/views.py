@@ -72,8 +72,10 @@ def auth(request):
     print ("code=",code)
     scope = request.GET.get('scope')
     print ("scope=",scope)
+    print ("_loginId=",_loginId)
     login = get_object_or_404(Login, pk=_loginId)
     client = Client()
+    print ("client=",client)
     access_token = client.exchange_code_for_token(client_id=login.clientID,
                                                   client_secret=login.clientSecret,
                                                   code=code)
