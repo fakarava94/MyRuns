@@ -127,11 +127,11 @@ USE_L10N = True
 STATIC_URL = '/static/'
 
 REST_FRAMEWORK = {
-	'DEFAULT_AUTHENTICATION_CLASSES': (
-	'rest_framework.authentication.TokenAuthentication',
-    'rest_framework.authentication.SessionAuthentication',
+       'DEFAULT_AUTHENTICATION_CLASSES': (
+       'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
    ),
-	'PAGE_SIZE': 10
+       'PAGE_SIZE': 10
 }
 
 CHANNEL_LAYERS = {
@@ -150,7 +150,7 @@ SVG_DIR = os.path.join(BASE_DIR, 'static/assets')
 print ('SVG_DIR=',SVG_DIR)
 
 STATICFILES_DIRS = [
-	SVG_DIR,
+     SVG_DIR,
     os.path.join(ANGULAR_APP_DIR),
 ]   
 
