@@ -52,6 +52,7 @@ def login(request,loginId):
     login.userName = 'In Progress...'
     request.session['loginID'] = loginId
     _loginId=loginId
+    print ("login::_loginId=",_loginId)
     client = Client()
     #url = client.authorization_url(client_id=login.clientID,
     #                               scope='write',
