@@ -33,9 +33,6 @@ ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(' ')
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
 #ALLOWED_HOSTS = ['192.168.1.68','fakarava94.no-ip.org']
 CORS_ORIGIN_ALLOW_ALL = True
 
