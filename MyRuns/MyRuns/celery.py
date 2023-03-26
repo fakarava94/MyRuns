@@ -9,7 +9,7 @@ app = Celery('MyRuns',
              broker=os.getenv("CELERY_BROKER_URL"),
              backend='redis://red-cgetk8pmbg568r47cnl0:6379')
 
-print ('>>> Celery app=",app)
+print ('>>> Celery app=',app)
 
 
 # Using a string here means the worker doesn't have to serialize
