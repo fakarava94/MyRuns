@@ -26,9 +26,11 @@ print('BASE_DIR=',BASE_DIR)
 SECRET_KEY = os.environ.get('SECRET_KEY', '')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', '0').lower() in ['true', 't', '1']
+#DEBUG = os.getenv('DEBUG', '0').lower() in ['true', 't', '1']
+DEBUG = 1
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(' ')
+#ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(' ')
+ALLOWED_HOSTS = '*'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
