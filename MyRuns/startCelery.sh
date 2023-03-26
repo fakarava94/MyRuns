@@ -1,3 +1,3 @@
 celery --help
-celery --app MyRuns.celery  worker --loglevel info --concurrency 4 --detach
+celery --app MyRuns  worker --loglevel info --concurrency 4 &
 gunicorn app:app
