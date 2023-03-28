@@ -1,9 +1,9 @@
-Django==2.0.5
+Django==2.2.28
 django-cors-headers==2.2.0
 djangorestframework==3.8.2
 mysql-connector-python==8.0.16
-celery==4.2.1
-celery-progress==0.0.3
+celery==5.2.6
+celery-progress
 channels==3.0.5
 channels-redis
 gunicorn==20.1.0
