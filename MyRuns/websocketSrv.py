@@ -1,6 +1,7 @@
 import asyncio
 import http
 import signal
+import logging
 
 import websockets
 
@@ -32,5 +33,11 @@ async def main():
 
 
 if __name__ == "__main__":
+    logging.basicConfig(
+       format="%(asctime)s %(message)s",
+       level=logging.DEBUG,
+    )
     print  ("Start websocket server ...")
+    logging.debug("Logging started")
+
     asyncio.run(main())
