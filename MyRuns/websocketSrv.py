@@ -8,7 +8,7 @@ import websockets
 
 async def echo(websocket):
     async for message in websocket:
-        print("received: ", message)
+        logging.debug("received: ", message)
         await websocket.send(message)
 
 
