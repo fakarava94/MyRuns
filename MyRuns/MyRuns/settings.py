@@ -57,6 +57,7 @@ INSTALLED_APPS = (
     'corsheaders',
     'celery_progress',
     'channels',
+    'daphne',
 )
 
 MIDDLEWARE = (
@@ -90,7 +91,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'MyRuns.wsgi.application'
-
+ASGI_APPLICATION = 'MyRuns.asgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
