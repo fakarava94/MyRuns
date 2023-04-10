@@ -14,11 +14,13 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 import os
 import mimetypes 
 from pathlib import Path
+import platform
 
 from dotenv import load_dotenv
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 print('BASE_DIR=',BASE_DIR)
+print ('uname=',platform.uname())
 
 # load_dotenv(BASE_DIR + '.env')
 
