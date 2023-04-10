@@ -11,10 +11,10 @@ class Consumers(AsyncWebsocketConsumer):
 
     async def connect(self):
         # Accept the connection
-        print ("Connect socket, self=",self.channel_name)
-        print ("scope=",self.scope)
-        print ("session=",self.scope["session"])
-        print ("user=",self.scope["user"])
+        log.info ("Connect socket, self=%s",self.channel_name)
+        log.info ("scope=%s",self.scope)
+        log.info ("session=%s",self.scope["session"])
+        log.info ("user=%s",self.scope["user"])
         
         await self.accept()
         await self.send(text_data=json.dumps(
@@ -28,21 +28,21 @@ class Consumers(AsyncWebsocketConsumer):
         
     async def receive(self, text_data):
         # login the user to this session.
-        print ("receive message: ",text_data)
+        log.info ("receive message: %s",text_data)
         data = json.loads(text_data)
         strUser = StravaUser.objects.filter(firstname=data['firstname'],lastname=data['lastname'])
         strUser.update(channel_name=self.channel_name)
         token = ''
         for u in strUser:
             token = u.token
-        print ('receive, token=',token)
+        log.info ('receive, token=%s',token)
         if data['type'] == 'Authentication':
             self.result = get_activities.delay (token)
-            print ('get_activities task result=',self.result)
+            log.info ('get_activities task result=%s',self.result)
         elif data['type'] == 'workout':
-            print ('get Workout message')
+            log.info ('get Workout message')
             self.result = get_workout.delay (token, data['message'])
-        print ('return do_work, tid=',self.result)
+        log.info ('return do_work, tid=%s',self.result)
         
     async def send_message(self, event):
         # Send a message down to the client
@@ -55,10 +55,10 @@ class Consumers(AsyncWebsocketConsumer):
                 "message": event["message"],
             },
         ))
-        print ("Send message OK")
+        log.info ("Send message OK")
         
     async def receive_json(self, content):
-        print ("receive_json")
+        log.info ("receive_json")
         command = content.get("command", None)
         try:
             print (command)
