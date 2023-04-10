@@ -90,7 +90,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'MyRuns.wsgi.application'
+#WSGI_APPLICATION = 'MyRuns.wsgi.application'
 ASGI_APPLICATION = 'MyRuns.asgi.application'
 
 # Database
