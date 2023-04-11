@@ -67,4 +67,4 @@ class Consumers(AsyncWebsocketConsumer):
             return
         
     async def disconnect(self, close_code):
-        print ('Socket closed!')
+        log.info ('Socket closed!')
