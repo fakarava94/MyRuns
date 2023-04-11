@@ -26,7 +26,7 @@ class Consumers(AsyncWebsocketConsumer):
             },
         ))
         
-    async def receive(self, text_data):
+    async def receive(self, text_data=None, bytes_data=None):
         # login the user to this session.
         log.info ("receive message: %s",text_data)
         data = json.loads(text_data)
