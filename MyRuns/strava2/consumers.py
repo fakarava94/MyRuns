@@ -1,7 +1,6 @@
 import json
 import logging
-from channels.generic.websocket import AsyncWebsocketConsumer, WebsocketConsumer
-from channels.auth import login
+from channels.generic.websocket import AsyncWebsocketConsumer
 from strava2.models import StravaUser
 from strava2.tasks import get_activities, get_workout, processJsonDataBackup
 
@@ -26,7 +25,7 @@ class Consumers(AsyncWebsocketConsumer):
             },
         ))
         
-    async def receive(self, text_data=None, bytes_data=None):
+    async def receive(self, text_data):
         # login the user to this session.
         log.info ("receive message: %s",text_data)
         data = json.loads(text_data)
