@@ -11,6 +11,7 @@ from strava2.serializers import WorkoutSerializer, LapSerializer, ActivityItemSe
 import re
 from datetime import datetime, date, timedelta
 from stravalib import Client
+log = logging.getLogger(__name__)
 
 import sys, os, json, time
 from fitparse import FitFile
@@ -83,16 +84,18 @@ PROGRESS_STATE = 'PROGRESS'
 @shared_task(bind=True)
 def get_activities (self, token):
 
+    log.info ("task::get_activities")
     client = Client(token)
     user = client.get_athlete()
-    
+    log.info ("user=%s",user)
+     
     # Update StavaUser
     lastUpdate=datetime.now()
     strUser = StravaUser.objects.filter(uid=user.id)
-    print ('strUser=',strUser)
+    log.info ('strUser=%s',strUser)
     for u in strUser:
         lastUpdate = u.lastUpdate
-    print ('lastUpdate=',lastUpdate)
+    log.info ('lastUpdate=%s',lastUpdate)
         
     #d = datetime(2018, 5, 5)
     date_1_day_ago = lastUpdate - timedelta(days=1)
@@ -105,7 +108,7 @@ def get_activities (self, token):
     for activity in activities:
         nbAct +=1
         
-    print ('NbAct=',nbAct)
+    log.info ('NbAct=%d',nbAct)
     initNewActivities = False
     newUser=False
     segment=15
