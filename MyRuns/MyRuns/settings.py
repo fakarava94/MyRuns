@@ -140,11 +140,10 @@ REST_FRAMEWORK = {
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'LOCATION': 'redis://red-cgetk8pmbg568r47cnl0:6379',
-        #'CONFIG': {
-        #   'hosts': [('red-cgetk8pmbg568r47cnl0', 6379)],
-        #   #'hosts': [('localhost', 6379)],
-        #},
+        'CONFIG': {
+             'hosts': [('red-cgetk8pmbg568r47cnl0', 6379)],
+             #'hosts': [('localhost', 6379)],
+        },
     }
 }
 ASGI_APPLICATION = "MyRuns.routing.application"
