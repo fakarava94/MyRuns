@@ -11,7 +11,7 @@ from strava2.serializers import WorkoutSerializer, LapSerializer, ActivityItemSe
 import re
 from datetime import datetime, date, timedelta
 from stravalib import Client
-log = logging.getLogger(__name__)
+import logging
 
 import sys, os, json, time
 from fitparse import FitFile
@@ -21,6 +21,7 @@ from asgiref.sync import async_to_sync
 import multiprocessing
 
 lock = multiprocessing.Lock()
+log = logging.getLogger(__name__)
 
 def getSpeed (speed):
     speed = 100/speed
