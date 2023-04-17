@@ -121,7 +121,7 @@ def get_activities (token):
     if not currentList.exists():
         newUser=True
     while (currentList.exists() or newUser) :
-        print ('currentList=',currentList)
+        log.info ('currentList=%s',currentList)
         print ('begin=',begin)
         print ('end=',end)
         actList = []
@@ -154,9 +154,9 @@ def get_activities (token):
                 #print ('distance=',strDistance)
                 #print ('stravaId=',act.upload_id)
                 isDataValid = True
-                print ('name=',act.name)
+                log.info ('name=%s',act.name)
                 dump=':'.join(hex(ord(x)) for x in act.name)
-                print ('dump name :',dump)
+                log.info ('dump name : %s',dump)
                 if act.name is None:
                     print ("  >>>> name is None")
                     isDataValid = False
@@ -170,8 +170,8 @@ def get_activities (token):
                 #print ('splits_metric=',act.splits_metric)
                 if not Activity.objects.filter(stravaId=activity.id).exists() and isDataValid:
                     workout=Workout.objects.create(name=act.name)
-                    print ('wid=',workout.id)
-                    print ('stravaId=',activity.id)
+                    log.info ('wid=%d',workout.id)
+                    log.info ('stravaId=%d',activity.id)
                     activity.wid=workout.id
                     stravaAct = Activity(strTime=strDate,strDist=strDistance,distance=act.distance,\
                         time=act.elapsed_time,label=act.name,stravaId=activity.id,wid=workout.id,workout_id=workout.id,\
