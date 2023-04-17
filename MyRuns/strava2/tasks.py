@@ -155,6 +155,8 @@ def get_activities (token):
                 #print ('stravaId=',act.upload_id)
                 isDataValid = True
                 print ('name=',act.name)
+                dump=':'.join(hex(ord(x)) for x in act.name)
+                print ('dump name :',dump)
                 if act.name is None:
                     print ("  >>>> name is None")
                     isDataValid = False
