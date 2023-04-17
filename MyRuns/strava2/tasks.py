@@ -153,10 +153,20 @@ def get_activities (token):
                 strDistance = format(float(dist)/1000,'.2f')
                 #print ('distance=',strDistance)
                 #print ('stravaId=',act.upload_id)
+                isDataValid = True
                 print ('name=',act.name)
+                if act.name is None:
+                    print ("  >>>> name is None")
+                    isDataValid = False
+                if act.name == 'null':
+                    print ("  >>>> name is null")
+                    isDataValid = False
+                if act.name == '':
+                    print ("  >>>> name is empty")
+                    isDataValid = False
                 #print ('time=',act.elapsed_time)
                 #print ('splits_metric=',act.splits_metric)
-                if not Activity.objects.filter(stravaId=activity.id).exists() and act.name != "":
+                if not Activity.objects.filter(stravaId=activity.id).exists() and isDataValid:
                     workout=Workout.objects.create(name=act.name)
                     print ('wid=',workout.id)
                     print ('stravaId=',activity.id)
