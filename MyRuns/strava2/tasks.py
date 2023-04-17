@@ -156,7 +156,7 @@ def get_activities (token):
                 print ('name=',act.name)
                 #print ('time=',act.elapsed_time)
                 #print ('splits_metric=',act.splits_metric)
-                if not Activity.objects.filter(stravaId=activity.id).exists():
+                if not Activity.objects.filter(stravaId=activity.id).exists() and act.name not null:
                     workout=Workout.objects.create(name=act.name)
                     print ('wid=',workout.id)
                     print ('stravaId=',activity.id)
@@ -180,7 +180,7 @@ def get_activities (token):
                         #print (actItem)
                         serializer = ActivityItemSerializer(actItem)
                         # pre-process Json for client response to get workout
-                        self.result = processJsonDataBackup.delay (token, workout.id, json.dumps(serializer.data))
+                        result = processJsonDataBackup.delay (token, workout.id, json.dumps(serializer.data))
                         #print ('serializer.data: ',serializer.data)
                         actList.insert(0,serializer.data)
                 else:
@@ -208,7 +208,7 @@ def get_activities (token):
     return {'current': nbItem, 'total': nbAct}
     
 
-def build_workout (self, token, pk, send=False, list=None):
+def build_workout (token, pk, send=False, list=None):
 
     print ('>>> build_workout:',pk)
     client = Client(token)
@@ -341,7 +341,7 @@ def get_workout ( token, pk):
     workout = Workout.objects.get(pk=pk)
     data = ""
     if workout.jsonData == '':
-        build_workout (self, token, pk, True)
+        build_workout ( token, pk, True)
         print ('workout.jsonData=',workout.jsonData)
     else:
         sendProgress (strUser[0].channel_name,60, None)
@@ -357,7 +357,7 @@ def get_workout ( token, pk):
 def processJsonDataBackup ( token, wid, activity):
     lock.acquire()
     print('workout data to save for: ', wid)
-    build_workout(self, token, wid, False, activity)
+    build_workout( token, wid, False, activity)
     lock.release()
 
 
