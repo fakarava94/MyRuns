@@ -156,7 +156,7 @@ def get_activities (token):
                 print ('name=',act.name)
                 #print ('time=',act.elapsed_time)
                 #print ('splits_metric=',act.splits_metric)
-                if not Activity.objects.filter(stravaId=activity.id).exists() and act.name not null:
+                if not Activity.objects.filter(stravaId=activity.id).exists() and act.name != "":
                     workout=Workout.objects.create(name=act.name)
                     print ('wid=',workout.id)
                     print ('stravaId=',activity.id)
