@@ -1,6 +1,7 @@
 from __future__ import absolute_import, unicode_literals
 from celery import shared_task
 from celery_progress.backend import ProgressRecorder
+from celery import Celery
 from django.shortcuts import get_object_or_404
 
 from django.utils import timezone
@@ -22,6 +23,7 @@ import multiprocessing
 
 lock = multiprocessing.Lock()
 log = logging.getLogger(__name__)
+app = Celery('tasks', broker=os.getenv("CELERY_BROKER_URL"))
 
 def getSpeed (speed):
     speed = 100/speed
@@ -82,8 +84,8 @@ def sendProgress (channel, value, activity):
     
 PROGRESS_STATE = 'PROGRESS'
 
-@shared_task(bind=True)
-def get_activities (self, token):
+@app.task
+def get_activities (token):
 
     log.info ("task::get_activities")
     client = Client(token)
@@ -331,8 +333,8 @@ def build_workout (self, token, pk, send=False, list=None):
 
     sendProgress (strUser[0].channel_name,100, list)
 
-@shared_task(bind=True)
-def get_workout (self, token, pk):
+@app.task
+def get_workout ( token, pk):
     client = Client(token)
     user = client.get_athlete()
     strUser = StravaUser.objects.filter(uid=user.id)
@@ -351,16 +353,16 @@ def get_workout (self, token, pk):
         sendMessage ('workout',data,strUser[0].channel_name)
 
     
-@shared_task(bind=True)
-def processJsonDataBackup (self, token, wid, activity):
+@app.task
+def processJsonDataBackup ( token, wid, activity):
     lock.acquire()
     print('workout data to save for: ', wid)
     build_workout(self, token, wid, False, activity)
     lock.release()
 
 
-@shared_task(bind=True)
-def processFit (self, loginId, token, file):
+@app.task
+def processFit ( loginId, token, file):
 
     client = Client(token)
     login = get_object_or_404(Login, pk=loginId)
