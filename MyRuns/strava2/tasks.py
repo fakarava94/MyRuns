@@ -217,7 +217,7 @@ def get_activities (token):
         begin=end
         if currentListSize+segment > limitList:
             end=begin+limitList-currentListSize
-        else
+        else:
             end=begin+segment
         currentList = Activity.objects.filter(uid=client.get_athlete().id).order_by('-strTime')[begin:end
         currentListSize+=len(currentList)
