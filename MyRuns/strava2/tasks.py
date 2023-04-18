@@ -183,7 +183,7 @@ def get_activities (token):
                     if not split.count():
                         if split is not None:
                             objs = [
-                                Split(split_index=i,split_distance=split.distance,split_time=split.elapsed_time,workout=workout) for i, split in enumerate(act.splits_metric)
+                                Split(split_index=i,split_distance=split.distance,split_time2=split.elapsed_time,workout=workout) for i, split in enumerate(act.splits_metric)
                             ]
                             split = Split.objects.bulk_create(objs)
                     
