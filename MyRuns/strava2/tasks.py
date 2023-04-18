@@ -100,14 +100,16 @@ def get_activities (token):
         lastUpdate = u.lastUpdate
     log.info ('lastUpdate=%s',lastUpdate)
         
-    #d = datetime(2018, 5, 5)
+    d = datetime(2018, 4, 1)
     date_1_day_ago = lastUpdate - timedelta(days=1)
     
-    activities = client.get_activities(after=date_1_day_ago,limit=50)
-    #activities = client.get_activities(after=d,limit=15)
+    #activities = client.get_activities(after=date_1_day_ago,limit=50)
+    activities = client.get_activities(after=d,limit=50)
     act = None
     nbItem = 0
     nbAct = 0
+    limitList = 20
+    currentListSize = 0
     for activity in activities:
         nbAct +=1
         
@@ -118,6 +120,7 @@ def get_activities (token):
     begin=0
     end=begin+segment
     currentList = Activity.objects.filter(uid=client.get_athlete().id).order_by('-strTime')[begin:end]
+    currentListSize = len(currentList)
     if not currentList.exists():
         newUser=True
     while (currentList.exists() or newUser) :
@@ -138,6 +141,9 @@ def get_activities (token):
             }
         sendMessage ('actList', data,strUser[0].channel_name)
         actList.clear()
+
+        if currentListSize >= limitList:
+            break
         
         if not initNewActivities:
             for activity in activities:
@@ -209,8 +215,12 @@ def get_activities (token):
                 initNewActivities = True
             
         begin=end
-        end=begin+segment
-        currentList = Activity.objects.filter(uid=client.get_athlete().id).order_by('-strTime')[begin:end]
+        if currentListSize+segment > limitList:
+            end=begin+limitList-currentListSize
+        else
+            end=begin+segment
+        currentList = Activity.objects.filter(uid=client.get_athlete().id).order_by('-strTime')[begin:end
+        currentListSize+=len(currentList)
         newUser=False
     
     if act is not None : 
