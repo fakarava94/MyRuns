@@ -101,11 +101,11 @@ def get_activities (token):
     log.info ('lastUpdate=%s',lastUpdate)
         
     limitList = 20
-    d = datetime(2023, 4, 1)
+    #d = datetime(2023, 4, 1)
     date_1_day_ago = lastUpdate - timedelta(days=1)
     
-    #activities = client.get_activities(after=date_1_day_ago,limit=50)
-    activities = client.get_activities(after=d,limit=limitList)
+    activities = client.get_activities(after=date_1_day_ago,limit=limitList)
+    #activities = client.get_activities(after=d,limit=limitList)
     act = None
     nbItem = 0
     nbAct = 0
