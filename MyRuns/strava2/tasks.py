@@ -101,7 +101,7 @@ def get_activities (token):
     log.info ('lastUpdate=%s',lastUpdate)
         
     limitList = 20
-    d = datetime(2018, 4, 1)
+    d = datetime(2023, 4, 1)
     date_1_day_ago = lastUpdate - timedelta(days=1)
     
     #activities = client.get_activities(after=date_1_day_ago,limit=50)
@@ -142,9 +142,6 @@ def get_activities (token):
             }
         sendMessage ('actList', data,strUser[0].channel_name)
         actList.clear()
-
-        if currentListSize >= limitList:
-            break
         
         if not initNewActivities:
             for activity in activities:
