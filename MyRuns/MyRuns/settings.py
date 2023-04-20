@@ -19,8 +19,8 @@ import platform
 from dotenv import load_dotenv
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-print('BASE_DIR=',BASE_DIR)
-print ('uname=',platform.uname())
+#print('BASE_DIR=',BASE_DIR)
+#print ('uname=',platform.uname())
 
 # load_dotenv(BASE_DIR + '.env')
 
@@ -161,7 +161,7 @@ STATICFILES_DIRS = [
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 mimetypes.add_type("assets/svg+xml", ".svg", True)
-print('mimetypes: ',mimetypes.guess_type('assets/run.svg'))
+#print('mimetypes: ',mimetypes.guess_type('assets/run.svg'))
 
 
 

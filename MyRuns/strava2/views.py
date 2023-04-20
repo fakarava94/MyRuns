@@ -175,7 +175,7 @@ def getActivitiesView(request):
 
 class ActivitiesView(generic.ListView):
     global _loginId
-    print ('ActivitiesView')
+    #print ('ActivitiesView')
     template_name = 'strava2/activity_list.html'
     context_object_name = 'activities_list'
 
@@ -210,7 +210,7 @@ class ActivitiesView(generic.ListView):
 
 class WorkoutView(generic.DetailView):
     global _loginId
-    print ('WorkoutView')
+    #print ('WorkoutView')
 
     model = Workout
     template_name = 'strava2/workout.html'

@@ -1,2 +1,4 @@
-celery --app MyRuns  worker --loglevel=DEBUG --concurrency=2 --without-heartbeat --without-mingle  &
+celery multi start w1 w2 -A MyRuns  --concurrency=4 --loglevel=info --detach --logfile=celery.log
+tail -f celery.log &
+./monitorWorkers.sh &
 gunicorn app:app
