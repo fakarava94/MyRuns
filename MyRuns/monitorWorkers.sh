@@ -1,5 +1,6 @@
 while sleep 15; do
-   status=`celery status -A MyRuns`
+   #status=`celery status -A MyRuns`
+   status=`celery status`
    echo $status
    if echo $status | egrep "w1@.*: OK" > /dev/null 2>&1
    then
