@@ -523,9 +523,9 @@ def processFit ( loginId, token, file):
     sendMessage ('workout', data,strUser[0].channel_name)
 
 @app.task
-def checkCeleryAvailibility ( ):
-    print('  >>>> checkCeleryAvailibility')
+def checkCeleryAvailibility ():
+    log.info('  >>>> checkCeleryAvailibility')
     request = HttpRequest()
     r = requests.post('https://celery-srv.onrender.com')
-    print('  >>>> checkCeleryAvailibility:', r)
+    log.info('  >>>> checkCeleryAvailibility:', r)
     
