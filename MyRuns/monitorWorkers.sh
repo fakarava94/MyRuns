@@ -1,5 +1,6 @@
 while sleep 15; do
    #status=`celery status -A MyRuns`
+   ps fax
    status=`celery status`
    echo $status
    if echo $status | egrep "celery@.*: OK" > /dev/null 2>&1
