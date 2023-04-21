@@ -11,5 +11,5 @@ app.secret_key = os.getenv('FLASK_SECRET_KEY', "super-secret")
 
 @app.route('/')
 def hello_world():
-    return 'Hello, World!
+    return 'Hello, World!'
 
