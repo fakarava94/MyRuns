@@ -137,6 +137,16 @@ REST_FRAMEWORK = {
        'PAGE_SIZE': 10
 }
 
+CELERY_BEAT_SCHEDULE = {
+    'check-celery-avalibility': {
+        'task': 'MyRuns.tasks.checkCeleryAvailibility',
+        'schedule': 60.0,
+        'options': {
+            'expires': 30.0
+        }
+    }
+}
+
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',

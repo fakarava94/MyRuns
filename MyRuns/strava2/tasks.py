@@ -6,6 +6,7 @@ from django.shortcuts import get_object_or_404
 
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
+from django.http import HttpRequest
 from strava2.models import Login, Activity, Workout, Lap, GpsCoord, HeartRate, \
     Speed, Elevation, Distance, Split, StravaUser
 from strava2.serializers import WorkoutSerializer, LapSerializer, ActivityItemSerializer
@@ -519,4 +520,12 @@ def processFit ( loginId, token, file):
     'currentAct': nbItem,
     'activities': actList
     }
-    sendMessage ('orkout', data,strUser[0].channel_name)
+    sendMessage ('workout', data,strUser[0].channel_name)
+
+@app.task
+def checkCeleryAvailibility ( ):
+    print('  >>>> checkCeleryAvailibility')
+    request = HttpRequest()
+    r = requests.post('https://celery-srv.onrender.com')
+    print('  >>>> checkCeleryAvailibility:', r)
+    
