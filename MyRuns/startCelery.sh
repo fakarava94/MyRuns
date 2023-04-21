@@ -3,4 +3,4 @@
 celery --app MyRuns  worker --loglevel=DEBUG --concurrency=2 -E &
 ./monitorWorkers.sh &
 # tail -F ./celery.log &
-gunicorn app:app --timeout 36000
+gunicorn app:app --timeout 300
