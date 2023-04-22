@@ -1,4 +1,4 @@
-while sleep 15; do
+while sleep 60; do
    #status=`celery status -A MyRuns`
    status=`celery status`
    echo $status

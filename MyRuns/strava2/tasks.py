@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404
 
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
-from django.http import HttpRequest
+import requests
 from strava2.models import Login, Activity, Workout, Lap, GpsCoord, HeartRate, \
     Speed, Elevation, Distance, Split, StravaUser
 from strava2.serializers import WorkoutSerializer, LapSerializer, ActivityItemSerializer
@@ -522,10 +522,13 @@ def processFit ( loginId, token, file):
     }
     sendMessage ('workout', data,strUser[0].channel_name)
 
-@app.task
+@app.task(name='checkCeleryAvailibility')
 def checkCeleryAvailibility ():
     log.info('  >>>> checkCeleryAvailibility')
-    request = HttpRequest()
-    r = requests.post('https://celery-srv.onrender.com')
-    log.info('  >>>> checkCeleryAvailibility:', r)
+    try:
+        r = requests.get('https://celery-srv.onrender.com')
+        log.info('  >>>> body= %s',r.content)
+    except RuntimeError as e:
+        print ("Check celery error ",e)
+    log.info('  >>>> checkCeleryAvailibility: %d', r.status_code)
     
