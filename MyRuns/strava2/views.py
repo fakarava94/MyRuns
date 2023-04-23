@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404, render, redirect
+from django.http import HttpResponse
 from strava2.models import Login, Activity, Workout, Lap, GpsCoord, HeartRate, \
     Speed, Elevation, Distance, Split, StravaUser
 from strava2.tasks import get_activities, processFit, get_workout
@@ -15,7 +16,7 @@ from strava2.serializers import WorkoutSerializer, LapSerializer, ActivityItemSe
 from strava2.stravaModel import gpsCoord
 import sys, os
 from celery.result import AsyncResult
-import json
+import json, logging
 
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
@@ -30,6 +31,7 @@ from fitparse import FitFile
 
 _loginId = 0
 _progress = {}
+log = logging.getLogger(__name__)
 
 class UploadFileForm(forms.Form):
     title = forms.CharField(max_length=50)
@@ -103,6 +105,10 @@ def getProgress(request):
     #data = {'value': 70}
     # print ('Receive getProgress request ...')
     return JsonResponse(data)
+
+def ping(request):
+    log.info('  >>>> received ping')
+    return HttpResponse(status=204)
     
 @csrf_exempt
 def uploadFiles(request):

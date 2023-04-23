@@ -17,4 +17,5 @@ urlpatterns = [
     re_path(r'^(?P<pk>[0-9]+)/workout$', views.WorkoutView.as_view(), name='workout'),
     re_path(r'^workoutDetail/(?P<pk>[0-9]+)$', views.WorkoutDetail.as_view(), name='workoutDetail'),
     re_path(r'^celery-progress/', include('celery_progress.urls')),
+    re_path(r'ping/.*$', views.ping, name='ping'),
     ]

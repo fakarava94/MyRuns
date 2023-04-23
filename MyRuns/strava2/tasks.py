@@ -531,4 +531,11 @@ def checkCeleryAvailibility ():
     except RuntimeError as e:
         print ("Check celery error ",e)
     log.info('  >>>> checkCeleryAvailibility: %d', r.status_code)
+
+    # ping django web server
+    try:
+        r = requests.get('https://django-srv.onrender.com/strava2/ping')
+        log.info('  >>>> status ping= %s',r.status_code)
+    except RuntimeError as e:
+        print ("Check celery error ",e)
     
