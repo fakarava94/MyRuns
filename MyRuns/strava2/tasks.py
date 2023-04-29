@@ -526,7 +526,7 @@ def processFit ( loginId, token, file):
 def checkCeleryAvailibility ():
     log.info('  >>>> checkCeleryAvailibility')
     try:
-        r = requests.get('https://celery-srv.onrender.com')
+        r = requests.get('https://mycelery.onrender.com')
         log.info('  >>>> body= %s',r.content)
     except RuntimeError as e:
         print ("Check celery error ",e)
@@ -534,7 +534,7 @@ def checkCeleryAvailibility ():
 
     # ping django web server
     try:
-        r = requests.get('https://django-srv.onrender.com/strava2/ping')
+        r = requests.get('https://django-srv-s9kn.onrender.com/strava2/ping')
         log.info('  >>>> status ping= %s',r.status_code)
     except RuntimeError as e:
         print ("Check celery error ",e)
