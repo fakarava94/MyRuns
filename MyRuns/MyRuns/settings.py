@@ -27,6 +27,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY', '')
 
+DATABASE_URL = os.environ.get('DATABASE_URL', '')
+
 # SECURITY WARNING: don't run with debug turned on in production!
 #DEBUG = os.getenv('DEBUG', '0').lower() in ['true', 't', '1']
 DEBUG = 1
@@ -101,10 +103,10 @@ ASGI_APPLICATION = 'MyRuns.asgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'myruns',
+        'NAME': 'myruns_en73',
         'USER': 'fli',
-        'PASSWORD': 'wzRuxiiK4sF0XlkwuRdTsb6VyY58uwQw',
-        'HOST': 'dpg-cgecj6pmbg58c1eg129g-a',
+        'PASSWORD': 'iqNFrdrffHXrcceCkDunnK1yfkyIaOOL',
+        'HOST': 'dpg-ch1fcrceoogo6oihajeg-a',
         'PORT': '',
     }
 }
