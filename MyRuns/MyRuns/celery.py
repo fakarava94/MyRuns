@@ -7,7 +7,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'MyRuns.settings')
 
 app = Celery('MyRuns',
              broker=os.getenv("CELERY_BROKER_URL"),
-             backend='redis://red-cgetk8pmbg568r47cnl0:6379')
+             backend=os.getenv("CELERY_BROKER_URL")
 
 print ('>>> Celery app=', app)
 
