@@ -27,8 +27,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY', '')
 
-DATABASE_URL = os.environ.get('DATABASE_URL', '')
-
 # SECURITY WARNING: don't run with debug turned on in production!
 #DEBUG = os.getenv('DEBUG', '0').lower() in ['true', 't', '1']
 DEBUG = 1
@@ -99,14 +97,21 @@ ASGI_APPLICATION = 'MyRuns.asgi.application'
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 # postgres://fli:wzRuxiiK4sF0XlkwuRdTsb6VyY58uwQw@dpg-cgecj6pmbg58c1eg129g-a/myruns
 
+DATABASE_URL = os.environ.get('DATABASE_URL', '')
+# ex: postgres://fli:iqNFrdrffHXrcceCkDunnK1yfkyIaOOL@dpg-ch1fcrceoogo6oihajeg-a/myruns_en73
+url=DATABASE_URL.split('//')[1]
+database_user=url.split(':')[0]
+database_passwd=url.split(':')[1].split('/')[0].split('@')[0]
+database_host=url.split(':')[1].split('/')[0].split('@')[1]
+database_name=url.split(':')[1].split('/')[1]
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'myruns_en73',
-        'USER': 'fli',
-        'PASSWORD': 'iqNFrdrffHXrcceCkDunnK1yfkyIaOOL',
-        'HOST': 'dpg-ch1fcrceoogo6oihajeg-a',
+        'NAME': database_name,
+        'USER': database_user,
+        'PASSWORD': database_passwd,
+        'HOST': database_host,
         'PORT': '',
     }
 }
