@@ -1,7 +1,7 @@
 
 from datetime import datetime, timedelta
 import logging
-import math, statistics
+import math, statistics, time
 from strava2.models import Login, Activity, Workout, Lap
 
 log = logging.getLogger(__name__)
@@ -13,6 +13,7 @@ class intervalTraining():
         self.hiAvSpeed=0
         self.hiAvDist=0
         self.liAvTime=0
+        self.hiTotalTime=0
         self.hiSpeed=[]
         self.hiTime=[]
         self.hiDist=[]
@@ -23,10 +24,11 @@ class intervalTraining():
         self.nbRecoveries=0
 
 class itItem():
-    def __init__(self, hiSpeed, hiTime, hiDist):
+    def __init__(self, hiSpeed, hiTime, hiDist, hiOriDist):
         self.hiSpeed=hiSpeed
         self.hiTime=hiTime
         self.hiDist=hiDist
+        self.hiOriDist=hiOriDist
         self.liSpeed=0
         self.liTime=0
         self.isRep=False
@@ -40,6 +42,7 @@ class itSeries():
     def __init__(self):
         self.itList=[]
         self.title=''
+        self.descr=''
         self.isRep=False
         self.nbReps=0
 
@@ -65,6 +68,7 @@ class Struct(object): pass
 
 def getIntervalTraining (workoutId):
 
+    log.debug(' >> getIntervalTraining')
     itDescr = Struct()
     itDescr.title=''
     itDescr.description='Generated description'
@@ -91,7 +95,7 @@ def getIntervalTraining (workoutId):
                     it.hiDist.append(lap.lap_distance)
                     it.hiTime.append(lap.lap_time)
                     rDist=roundDistance(lap.lap_distance)
-                    listIt.append(itItem(lap.lap_average_speed, lap.lap_time, rDist))
+                    listIt.append(itItem(lap.lap_average_speed, lap.lap_time, rDist, lap.lap_distance))
                     #print ('add dist ',lap.lap_distance)
             else:
                 if len(listIt)>0:
@@ -117,6 +121,8 @@ def getIntervalTraining (workoutId):
         if len(series)>0:
             it.hiAvSpeed=statistics.mean(it.hiSpeed)
             it.hiAvDist=statistics.mean(it.hiDist)
+            totalTimes=sum([x.total_seconds() for x in it.hiTime])
+            it.hiTotalTime = time.strftime('%M:%S',time.gmtime(totalTimes))
             log.debug ('Interval training')
             pace=str(timedelta(seconds=(1000/it.hiAvSpeed)))
             pace=convertSpeed2Pace (it.hiAvSpeed)
@@ -126,14 +132,21 @@ def getIntervalTraining (workoutId):
             log.debug ('nbReps=%d',it.nbReps)
             log.debug ('nbSeries=%d',len(series))
 
-            reps=1
-            repIdx=-1
+            # tag repetitions if any
             for s in series:
                 print("====================")
                 i=0
+                reps=1
+                repIdx=-1
                 for l in s.itList:
+                    averageDist=statistics.mean([x.hiDist for x in l])
+                    #log.debug ('  dist moy %d',averageDist)
                     for t in l:
-                        log.debug ('  >>> %d',t.hiDist)
+                        #log.debug ('  >>> %d',t.hiDist)
+                        targetDist=roundDistance(averageDist)
+                        #log.debug ('  targetDist %d',targetDist)
+                        if (abs(t.hiDist-targetDist)<=50):
+                            t.hiDist=targetDist
                         if i> 0:
                             if t.hiDist==l[i-1].hiDist:
                                 t.isRep = True
@@ -149,6 +162,8 @@ def getIntervalTraining (workoutId):
                         if i==(len(l)) and t.isRep:
                             l[repIdx].nbReps = reps
 
+            # Compute activity title by series
+            descr=''
             for s in series:
                 title=''
                 for l in s.itList:
@@ -159,15 +174,24 @@ def getIntervalTraining (workoutId):
                             else:
                                 sep='/'       
                             title=title+sep+str(t.nbReps)+'x'+str(t.hiDist)+'m'
+                            hiSpeed=[x.hiSpeed for x in l]
+                            hiAvrSpeed=convertSpeed2Pace(statistics.mean(hiSpeed)) 
+                            liTime=[x.liTime.total_seconds() for x in l[0:-1]]
+                            liAvrRest1=statistics.mean(liTime)
+                            liAvrRest=time.strftime('%M:%S',time.gmtime(liAvrRest1))
+                            descr=descr+sep+str(t.nbReps)+'x'+str(t.hiDist)+'m'+' (moy: '+hiAvrSpeed+' r='+liAvrRest+') '
                         elif not t.isRep:
                             if title=='':
                                 sep=''
                             else:
                                 sep='/'
                             title=title+sep+str(t.hiDist)+'m'
+                            hiAvrSpeed=convertSpeed2Pace(t.hiSpeed) 
+                            liAvrRest=time.strftime('%M:%S',time.gmtime(t.liTime.total_seconds()))
+                            descr=descr+sep+str(t.hiDist)+'m'+' (moy: '+hiAvrSpeed+' r='+liAvrRest+') '
                 s.title=title
 
-            # get clusters
+            # get clusters if any (groups of reps)
             i=0
             repIdx=-1
             for s in series:
@@ -186,6 +210,7 @@ def getIntervalTraining (workoutId):
                 if i==(len(series)) and s.isRep:
                     series[repIdx].nbReps = reps
 
+            # Compute activity title (summary)
             title=''
             for s in series:
                 if s.isRep and s.nbReps>0:
@@ -200,9 +225,13 @@ def getIntervalTraining (workoutId):
                     else:
                         sep='/'
                     title=title+sep+s.title
+
+            descr=descr+'\nVitesse moyenne des intervalles: %s\nDistance totale des intervalles: %sm\nTemps total des intervalles: %s' % (convertSpeed2Pace(it.hiAvSpeed), (round(sum(it.hiDist),0)), it.hiTotalTime)
             log.debug('title=%s',title)
-            itDescr.title = title
-            itDescr.type = 'IT'
+            log.debug('descr=%s',descr)
+            itDescr.title=title
+            itDescr.description=descr
+            itDescr.type='IT'
         else:
             log.debug ('Regular workout')
 
