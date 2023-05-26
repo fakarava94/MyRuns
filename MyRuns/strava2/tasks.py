@@ -10,6 +10,7 @@ import requests
 from strava2.models import Login, Activity, Workout, Lap, GpsCoord, HeartRate, \
     Speed, Elevation, Distance, Split, StravaUser
 from strava2.serializers import WorkoutSerializer, LapSerializer, ActivityItemSerializer
+from strava2.intervalTraining import getIntervalTraining
 import re
 from datetime import datetime, date, timedelta
 from stravalib import Client
@@ -197,9 +198,10 @@ def get_activities (token):
                         #print (actItem)
                         serializer = ActivityItemSerializer(actItem)
                         # pre-process Json for client response to get workout
-                        result = processJsonDataBackup.delay (token, workout.id, json.dumps(serializer.data))
+                        result = processJsonDataBackup.delay (token, workout.id, json.dumps(serializer.data),activity.id)
                         #print ('serializer.data: ',serializer.data)
                         actList.insert(0,serializer.data)
+
                 else:
                     Activity.objects.filter(stravaId=activity.id).update(strTime=strDate,strDist=strDistance,resolution=strUser[0].resolution)
                 
@@ -229,7 +231,7 @@ def get_activities (token):
     return {'current': nbItem, 'total': nbAct}
     
 
-def build_workout (token, pk, send=False, list=None):
+def build_workout (token, pk, send=False, list=None, stravaActId=None):
 
     print ('>>> build_workout:',pk)
     client = Client(token)
@@ -352,6 +354,14 @@ def build_workout (token, pk, send=False, list=None):
     Activity.objects.filter(id=activity.id).update(progress=100)
     print ('Store Json data done')
 
+    if stravaActId is not None:
+        print ('Get Intervall Training ...')
+        it = getIntervalTraining(workout.id)
+        if it.type == 'IT':
+            # Update strava activity for name and description
+            act = client.update_activity(stravaActId, name=it.title, description=it.description)
+            print ('updated act=',act)
+
     sendProgress (strUser[0].channel_name,100, list)
 
 @app.task
@@ -375,10 +385,10 @@ def get_workout ( token, pk):
 
     
 @app.task
-def processJsonDataBackup ( token, wid, activity):
+def processJsonDataBackup ( token, wid, activity, stravaActId):
     lock.acquire()
     print('workout data to save for: ', wid)
-    build_workout( token, wid, False, activity)
+    build_workout( token, wid, False, activity, stravaActId)
     lock.release()
 
 

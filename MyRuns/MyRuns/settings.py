@@ -15,7 +15,6 @@ import os
 import mimetypes 
 from pathlib import Path
 import platform
-
 from dotenv import load_dotenv
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -147,7 +146,7 @@ REST_FRAMEWORK = {
 CELERY_BEAT_SCHEDULE = {
     'check-celery-avalibility': {
         'task': 'checkCeleryAvailibility',
-        'schedule': 300.0,
+        'schedule': 240.0,
         'options': {
             'expires': 30.0
         }
@@ -179,6 +178,4 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 mimetypes.add_type("assets/svg+xml", ".svg", True)
 #print('mimetypes: ',mimetypes.guess_type('assets/run.svg'))
-
-
 
