@@ -66,7 +66,7 @@ def login(request,loginId):
     
     #return redirect(login.url+'/?client_id='+login.clientID+'&redirect_uri='+login.callbackURL+'&response_type=code')
     
-    return redirect(login.url+'/?client_id='+login.clientID+'&redirect_uri='+login.callbackURL+'&response_type=code'+'&scope=activity:read_all,activity:write')
+    return redirect(login.url+'/?client_id='+login.clientID+'&redirect_uri='+login.callbackURL+'&response_type=code'+'&scope=activity:read_all,activity:write,profile:read_all')
 
 def auth(request):
     global _loginId
