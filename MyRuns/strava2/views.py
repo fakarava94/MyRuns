@@ -56,17 +56,17 @@ def login(request,loginId):
     _loginId=loginId
     print ("login::_loginId=",_loginId)
     client = Client()
-    #url = client.authorization_url(client_id=login.clientID,
-    #                               scope='write',
-    #                               redirect_uri=login.callbackURL)
-    #print ('url=',url)
-    #return redirect(url)
+    url = client.authorization_url(client_id=login.clientID,
+                                   scope='ctivity:read_all,activity:write,profile:read_all',
+                                   redirect_uri=login.callbackURL)
+    print ('url=',url)
+    return redirect(url)
     
     #return redirect(login.url+'/?client_id='+login.clientID+'&redirect_uri='+login.callbackURL+'&response_type=code'+'&scope=read,read_all,activity:read_all,profile:read_all')
     
     #return redirect(login.url+'/?client_id='+login.clientID+'&redirect_uri='+login.callbackURL+'&response_type=code')
     
-    return redirect(login.url+'/?client_id='+login.clientID+'&redirect_uri='+login.callbackURL+'&response_type=code'+'&scope=activity:read_all,activity:write,profile:read_all')
+    #return redirect(login.url+'/?client_id='+login.clientID+'&redirect_uri='+login.callbackURL+'&response_type=code'+'&scope=activity:read_all,activity:write,profile:read_all')
 
 def auth(request):
     global _loginId
