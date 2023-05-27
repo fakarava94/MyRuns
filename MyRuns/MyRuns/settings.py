@@ -146,7 +146,7 @@ REST_FRAMEWORK = {
 CELERY_BEAT_SCHEDULE = {
     'check-celery-avalibility': {
         'task': 'checkCeleryAvailibility',
-        'schedule': 240.0,
+        'schedule': 200.0,
         'options': {
             'expires': 30.0
         }
