@@ -113,7 +113,6 @@ def get_activities (token):
     nbAct = 0
 
     log.info ('activities=%s',activities)
-    log.info ('activities size=%d',len(activities))
    
     currentListSize = 0
     for activity in activities:
