@@ -197,7 +197,7 @@ class ActivitiesView(generic.ListView):
         #api_response = api_instance.get_logged_in_athlete_activities(before=before, after=after, page=page, per_page=per_page)
         #pprint(api_response)
         print ('ActivitiesView, access_token=',self.request.session.get('access_token'))
-        self.client = Client(access_token=self.request.session.get('access_token'))
+        self.client = Client(self.request.session.get('access_token')['access_token'])
         return Activity.objects.filter(uid=self.client.get_athlete().id).order_by('-strTime')
      
     def get_context_data(self, **kwargs):
