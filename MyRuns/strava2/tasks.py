@@ -181,7 +181,7 @@ def get_activities (token):
                     workout=Workout.objects.create(name=act.name)
                     log.info ('wid=%d',workout.id)
                     log.info ('stravaId=%d',activity.id)
-                    activity.wid=workout.id
+                    # activity.wid=workout.id
                     stravaAct = Activity(strTime=strDate,strDist=strDistance,distance=act.distance,\
                         time=act.elapsed_time,label=act.name,stravaId=activity.id,wid=workout.id,workout_id=workout.id,\
                         resolution=strUser[0].resolution,uid=user.id,type=act.type,state="c",progress=0)
