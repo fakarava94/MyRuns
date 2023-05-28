@@ -75,6 +75,7 @@ def getIntervalTraining (workoutId):
     itDescr.type='REGULAR'
 
     laps = Lap.objects.filter(workout_id=workoutId)
+    log.debug ('nb laps=%s',len(laps))
     if len(laps) < 5:
         log.debug ('Regular workout')
     else:
@@ -85,7 +86,7 @@ def getIntervalTraining (workoutId):
         # warmup speed
         easySpeed=laps[0].lap_average_speed 
         for lap in laps[1:]:
-            #log.debug ('     >> %s %s',lap.lap_distance, lap.lap_time)
+            log.debug ('     >> %s %s',lap.lap_distance, lap.lap_time)
             #log.debug ('     >> %s',lap.lap_average_speed)
             if (lap.lap_average_speed/easySpeed) > 1.2:
                 if ( (i+1 <= len(laps) and laps[i+1].lap_average_speed/lap.lap_average_speed) < 0.8) or i==len(laps):
@@ -96,9 +97,10 @@ def getIntervalTraining (workoutId):
                     it.hiTime.append(lap.lap_time)
                     rDist=roundDistance(lap.lap_distance)
                     listIt.append(itItem(lap.lap_average_speed, lap.lap_time, rDist, lap.lap_distance))
-                    #print ('add dist ',lap.lap_distance)
+                    print ('add dist ',lap.lap_distance)
             else:
                 if len(listIt)>0:
+                    log.debug ('it.nbRecoveries=%d',it.nbRecoveries)
                     it.liTime.append(lap.lap_time)
                     listIt[it.nbRecoveries].setRecovery (lap.lap_average_speed,lap.lap_time)
                     it.nbRecoveries=it.nbRecoveries+1

@@ -117,8 +117,8 @@ def get_activities (token):
    
     currentListSize = 0
     for activity in activities:
-        log.info ('act=%s',activity)
-        nbAct +=1
+        if activity.type in typesFilter:
+            nbAct +=1
         
     log.info ('NbAct=%d',nbAct)
     initNewActivities = False
@@ -166,8 +166,8 @@ def get_activities (token):
                     #print ('stravaId=',act.upload_id)
                     isDataValid = True
                     log.info ('name=%s',act.name)
-                    dump=':'.join(hex(ord(x)) for x in act.name)
-                    log.info ('dump name : %s',dump)
+                    #dump=':'.join(hex(ord(x)) for x in act.name)
+                    #log.info ('dump name : %s',dump)
                     if act.name is None:
                         print ("  >>>> name is None")
                         isDataValid = False

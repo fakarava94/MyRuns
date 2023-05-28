@@ -57,7 +57,7 @@ def login(request,loginId):
     print ("login::_loginId=",_loginId)
     client = Client()
     url = client.authorization_url(client_id=login.clientID,
-                                   scope=['activity:read_all', 'activity:write', 'profile:read_all'],
+                                   scope=['activity:read_all', 'activity:write'],
                                    redirect_uri=login.callbackURL)
     print ('url=',url)
     return redirect(url)
