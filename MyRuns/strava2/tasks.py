@@ -358,6 +358,8 @@ def build_workout (token, pk, send=False, list=None, stravaActId=None):
     Activity.objects.filter(id=activity.id).update(progress=100)
     print ('Store Json data done')
 
+    sendProgress (strUser[0].channel_name,100, list)
+
     if stravaActId is not None:
         print ('Get Intervall Training ...')
         it = getIntervalTraining(workout.id)
@@ -365,8 +367,6 @@ def build_workout (token, pk, send=False, list=None, stravaActId=None):
             # Update strava activity for name and description
             act = client.update_activity(stravaActId, name=it.title, description=it.description)
             print ('updated act=',act)
-
-    sendProgress (strUser[0].channel_name,100, list)
 
 @app.task
 def get_workout ( token, pk):

@@ -75,8 +75,24 @@ def getIntervalTraining (workoutId):
     itDescr.type='REGULAR'
 
     laps = Lap.objects.filter(workout_id=workoutId)
-    log.debug ('nb laps=%s',len(laps))
-    if len(laps) < 5:
+    # check if auto-lap is on
+    autoLap = False
+    nbLaps=len(laps)
+    if nbLaps>1:
+        lapList=[]
+        i=1
+        for lap in laps:
+            if i<nbLaps:
+                lapList.append(lap)
+            i=i+1
+        avLap = statistics.mean(x.lap_distance for x in lapList)
+        log.debug ('avLap=%d',avLap)
+        if roundDistance(avLap) == roundDistance(laps[0].lap_distance):
+            autoLap = True
+    log.debug ('AutoLap=%s',autoLap)
+
+    log.debug ('nb laps=%s',nbLaps)
+    if len(laps) < 5 or autoLap:
         log.debug ('Regular workout')
     else:
         it = intervalTraining()
@@ -86,7 +102,7 @@ def getIntervalTraining (workoutId):
         # warmup speed
         easySpeed=laps[0].lap_average_speed 
         for lap in laps[1:]:
-            log.debug ('     >> %s %s',lap.lap_distance, lap.lap_time)
+            #log.debug ('     >> %s %s',lap.lap_distance, lap.lap_time)
             #log.debug ('     >> %s',lap.lap_average_speed)
             if (lap.lap_average_speed/easySpeed) > 1.2:
                 if ( (i+1 <= len(laps) and laps[i+1].lap_average_speed/lap.lap_average_speed) < 0.8) or i==len(laps):
@@ -99,8 +115,8 @@ def getIntervalTraining (workoutId):
                     listIt.append(itItem(lap.lap_average_speed, lap.lap_time, rDist, lap.lap_distance))
                     print ('add dist ',lap.lap_distance)
             else:
-                if len(listIt)>0:
-                    log.debug ('it.nbRecoveries=%d',it.nbRecoveries)
+                if len(listIt)>0 and it.nbRecoveries==(len(listIt)-1):
+                    #log.debug ('it.nbRecoveries=%d',it.nbRecoveries)
                     it.liTime.append(lap.lap_time)
                     listIt[it.nbRecoveries].setRecovery (lap.lap_average_speed,lap.lap_time)
                     it.nbRecoveries=it.nbRecoveries+1
