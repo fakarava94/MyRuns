@@ -111,6 +111,7 @@ def get_activities (token):
     act = None
     nbItem = 0
     nbAct = 0
+    typesFilter = ["Run","Ride"]
 
     log.info ('activities=%s',activities)
    
@@ -150,72 +151,73 @@ def get_activities (token):
         
         if not initNewActivities:
             for activity in activities:
-                StravaUser.objects.filter(uid=user.id).update(currentActIndex=nbItem, nbActToRetreive=nbAct)
-                act = client.get_activity(activity.id)
-                strDate = act.start_date.strftime("%Y-%m-%d %H:%M:%S")
-                #print ('uid=',user.id)
-                #print ('start_date=',strDate)
-                #print ('act.distance=',act.distance)
-                #print ('act.type=',act.type)
-                dist = re.sub(' .*$','',str(act.distance))
-                #print ('dist=',dist)
-                strDistance = format(float(dist)/1000,'.2f')
-                #print ('distance=',strDistance)
-                #print ('stravaId=',act.upload_id)
-                isDataValid = True
-                log.info ('name=%s',act.name)
-                dump=':'.join(hex(ord(x)) for x in act.name)
-                log.info ('dump name : %s',dump)
-                if act.name is None:
-                    print ("  >>>> name is None")
-                    isDataValid = False
-                if act.name == 'null':
-                    print ("  >>>> name is null")
-                    isDataValid = False
-                if act.name == '':
-                    print ("  >>>> name is empty")
-                    isDataValid = False
-                #print ('time=',act.elapsed_time)
-                #print ('splits_metric=',act.splits_metric)
-                if not Activity.objects.filter(stravaId=activity.id).exists() and isDataValid:
-                    workout=Workout.objects.create(name=act.name)
-                    log.info ('wid=%d',workout.id)
-                    log.info ('stravaId=%d',activity.id)
-                    # activity.wid=workout.id
-                    stravaAct = Activity(strTime=strDate,strDist=strDistance,distance=act.distance,\
-                        time=act.elapsed_time,label=act.name,stravaId=activity.id,wid=workout.id,workout_id=workout.id,\
-                        resolution=strUser[0].resolution,uid=user.id,type=act.type,state="c",progress=0)
-                    stravaAct.save()
-                    Workout.objects.filter(id=workout.id).update(actId=stravaAct.id)
-                    split = Split.objects.filter(workout__id=workout.id)
-                    print ('Split first element=',split.count())
-                    if not split.count():
-                        if split is not None:
-                            objs = [
-                                Split(split_index=i,split_distance=split.distance,split_time=split.elapsed_time,workout=workout) for i, split in enumerate(act.splits_metric)
-                            ]
-                            split = Split.objects.bulk_create(objs)
-                    
-                    # Send result list to client
-                    for actItem in Activity.objects.filter(stravaId=activity.id):
-                        #print (actItem)
-                        serializer = ActivityItemSerializer(actItem)
-                        # pre-process Json for client response to get workout
-                        result = processJsonDataBackup.delay (token, workout.id, json.dumps(serializer.data),activity.id)
-                        #print ('serializer.data: ',serializer.data)
-                        actList.insert(0,serializer.data)
+                if activity.type in typesFilter:
+                    StravaUser.objects.filter(uid=user.id).update(currentActIndex=nbItem, nbActToRetreive=nbAct)
+                    act = client.get_activity(activity.id)
+                    strDate = act.start_date.strftime("%Y-%m-%d %H:%M:%S")
+                    #print ('uid=',user.id)
+                    #print ('start_date=',strDate)
+                    #print ('act.distance=',act.distance)
+                    #print ('act.type=',act.type)
+                    dist = re.sub(' .*$','',str(act.distance))
+                    #print ('dist=',dist)
+                    strDistance = format(float(dist)/1000,'.2f')
+                    #print ('distance=',strDistance)
+                    #print ('stravaId=',act.upload_id)
+                    isDataValid = True
+                    log.info ('name=%s',act.name)
+                    dump=':'.join(hex(ord(x)) for x in act.name)
+                    log.info ('dump name : %s',dump)
+                    if act.name is None:
+                        print ("  >>>> name is None")
+                        isDataValid = False
+                    if act.name == 'null':
+                        print ("  >>>> name is null")
+                        isDataValid = False
+                    if act.name == '':
+                        print ("  >>>> name is empty")
+                        isDataValid = False
+                    #print ('time=',act.elapsed_time)
+                    #print ('splits_metric=',act.splits_metric)
+                    if not Activity.objects.filter(stravaId=activity.id).exists() and isDataValid:
+                        workout=Workout.objects.create(name=act.name)
+                        log.info ('wid=%d',workout.id)
+                        log.info ('stravaId=%d',activity.id)
+                        # activity.wid=workout.id
+                        stravaAct = Activity(strTime=strDate,strDist=strDistance,distance=act.distance,\
+                            time=act.elapsed_time,label=act.name,stravaId=activity.id,wid=workout.id,workout_id=workout.id,\
+                            resolution=strUser[0].resolution,uid=user.id,type=act.type,state="c",progress=0)
+                        stravaAct.save()
+                        Workout.objects.filter(id=workout.id).update(actId=stravaAct.id)
+                        split = Split.objects.filter(workout__id=workout.id)
+                        print ('Split first element=',split.count())
+                        if not split.count():
+                            if split is not None:
+                                objs = [
+                                    Split(split_index=i,split_distance=split.distance,split_time=split.elapsed_time,workout=workout) for i, split in enumerate(act.splits_metric)
+                                ]
+                                split = Split.objects.bulk_create(objs)
+                        
+                        # Send result list to client
+                        for actItem in Activity.objects.filter(stravaId=activity.id):
+                            #print (actItem)
+                            serializer = ActivityItemSerializer(actItem)
+                            # pre-process Json for client response to get workout
+                            result = processJsonDataBackup.delay (token, workout.id, json.dumps(serializer.data),activity.id)
+                            #print ('serializer.data: ',serializer.data)
+                            actList.insert(0,serializer.data)
 
-                else:
-                    Activity.objects.filter(stravaId=activity.id).update(strTime=strDate,strDist=strDistance,resolution=strUser[0].resolution)
-                
-                nbItem+=1
-                
-                data = {
-                'nbAct': nbAct,
-                'currentAct': nbItem,
-                'activities': actList
-                }
-                sendMessage ('actList', data, strUser[0].channel_name) 
+                    else:
+                        Activity.objects.filter(stravaId=activity.id).update(strTime=strDate,strDist=strDistance,resolution=strUser[0].resolution)
+                    
+                    nbItem+=1
+                    
+                    data = {
+                    'nbAct': nbAct,
+                    'currentAct': nbItem,
+                    'activities': actList
+                    }
+                    sendMessage ('actList', data, strUser[0].channel_name) 
 
         begin=end
         if currentListSize+segment > limitList:
