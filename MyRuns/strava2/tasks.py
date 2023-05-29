@@ -11,7 +11,7 @@ from strava2.models import Login, Activity, Workout, Lap, GpsCoord, HeartRate, \
     Speed, Elevation, Distance, Split, StravaUser
 from strava2.serializers import WorkoutSerializer, LapSerializer, ActivityItemSerializer
 from strava2.intervalTraining import getIntervalTraining
-import re
+import re, time
 from datetime import datetime, date, timedelta
 from stravalib import Client
 import logging
@@ -26,6 +26,7 @@ import multiprocessing
 lock = multiprocessing.Lock()
 log = logging.getLogger(__name__)
 app = Celery('tasks', broker=os.getenv("CELERY_BROKER_URL"))
+currentTime=time.time()
 
 def getSpeed (speed):
     speed = 100/speed
@@ -552,4 +553,11 @@ def checkCeleryAvailibility ():
         log.info('  >>>> status ping= %s',r.status_code)
     except RuntimeError as e:
         print ("Check celery error ",e)
+
+    # Activities synchro each hour
+    deltatime=currentTime-time.time()
+    if deltatime >= 3600:
+        r = requests.get('https://django-srv-s9kn.onrender.com/strava2/activities')
+        log.info('  >>>> status getActivities= %s',r.status_code)
+    currentTime=time.time()
     
