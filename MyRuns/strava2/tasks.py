@@ -539,6 +539,7 @@ def processFit ( loginId, token, file):
 
 @app.task(name='checkCeleryAvailibility')
 def checkCeleryAvailibility ():
+    global currentTime
     log.info('  >>>> checkCeleryAvailibility')
     try:
         r = requests.get('https://mycelery.onrender.com')
