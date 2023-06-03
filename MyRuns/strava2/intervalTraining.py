@@ -163,7 +163,9 @@ def getIntervalTraining (workoutId):
                         #log.debug ('  >>> %d',t.hiDist)
                         targetDist=roundDistance(averageDist)
                         #log.debug ('  targetDist %d',targetDist)
-                        if (abs(t.hiDist-targetDist)<=50):
+                        std=statistics.stdev([x.hiDist for x in l])
+                        log.debug ('  std %d',std)
+                        if (abs(t.hiDist-targetDist)<=50 and std <50):
                             t.hiDist=targetDist
                         if i> 0:
                             if t.hiDist==l[i-1].hiDist:
