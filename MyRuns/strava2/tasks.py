@@ -63,7 +63,7 @@ def sendMessage (type, data, channel):
         }
     )
     
-def sendProgress (channel, value, activity):
+def sendProgress (channel, value, activity, title=None):
     
     if activity is None:
         data = {
@@ -76,6 +76,8 @@ def sendProgress (channel, value, activity):
         print ('activity=',jsData)
         jsData['progress'] = str(value)
         jsData['state'] = "u"
+        if title is not None:
+            jsData['label'] = title
         actList = []
         actList.append(jsData)
         print ('progress=',jsData['progress'])
@@ -244,7 +246,7 @@ def build_workout (token, pk, send=False, list=None, stravaActId=None):
     user = client.get_athlete()
     strUser = StravaUser.objects.filter(uid=user.id)
     
-    sendProgress (strUser[0].channel_name,5, list)
+    sendProgress (strUser[0].channel_name, 5, list)
     
     workout = Workout.objects.get(pk=pk)
     types = ['time', 'distance', 'latlng', 'altitude', 'heartrate', 'velocity_smooth']
@@ -265,7 +267,7 @@ def build_workout (token, pk, send=False, list=None, stravaActId=None):
         print ('Get streams begin')
         streams = client.get_activity_streams(activity_id=activity.stravaId,resolution=resolution,types=types)
         print ('streams=',streams)
-        sendProgress (strUser[0].channel_name,10, list)
+        sendProgress (strUser[0].channel_name, 10, list)
         
         #print('time seq size=',len(streams['time'].data))
         #print('dist seq',streams['distance'].data)
@@ -293,7 +295,7 @@ def build_workout (token, pk, send=False, list=None, stravaActId=None):
             ]
             coord = HeartRate.objects.bulk_create(objs)
         
-        sendProgress (strUser[0].channel_name,25, list)
+        sendProgress (strUser[0].channel_name, 25, list)
         if not distance.count() and 'distance' in streams:
             objs = [
                 Distance(distance_index=i,distance_value=dist,workout=workout) for i, dist in enumerate(streams['distance'].data)
@@ -307,7 +309,7 @@ def build_workout (token, pk, send=False, list=None, stravaActId=None):
             ]
             coord = Speed.objects.bulk_create(objs)
         
-        sendProgress (strUser[0].channel_name,30, list)
+        sendProgress (strUser[0].channel_name, 30, list)
         elevation = Elevation.objects.filter(workout__id=workout.id)
         if not elevation.count() and 'altitude' in streams:
             objs = [
@@ -315,7 +317,7 @@ def build_workout (token, pk, send=False, list=None, stravaActId=None):
             ]
             coord = Elevation.objects.bulk_create(objs)
         
-        sendProgress (strUser[0].channel_name,35, list)
+        sendProgress (strUser[0].channel_name, 35, list)
         laps = client.get_activity_laps(activity.stravaId)
         i=0
         for strLap in laps:
@@ -338,13 +340,13 @@ def build_workout (token, pk, send=False, list=None, stravaActId=None):
                 print ('total_elevation_gain=',strLap.total_elevation_gain)
                 print ('pace_zone=',strLap.pace_zone)
             
-    sendProgress (strUser[0].channel_name,40, list)
+    sendProgress (strUser[0].channel_name, 40, list)
     #workout_sq=Workout.objects.filter(id=workout.id)
     #workout_sq = WorkoutSerializer.setup_eager_loading(workout_sq) 
     #serializer = WorkoutSerializer(workout_sq, many=True)
     serializer = WorkoutSerializer(workout)
     #print ('serializer.data size=',sys.getsizeof(serializer.data))
-    sendProgress (strUser[0].channel_name,75, list)
+    sendProgress (strUser[0].channel_name, 75, list)
     #print ('jsonData=',workout.jsonData)
     data = ""
     
@@ -360,8 +362,7 @@ def build_workout (token, pk, send=False, list=None, stravaActId=None):
     Activity.objects.filter(id=activity.id).update(progress=100)
     print ('Store Json data done')
 
-    sendProgress (strUser[0].channel_name,100, list)
-
+    title = None
     if stravaActId is not None:
         print ('Get Intervall Training ...')
         it = getIntervalTraining(workout.id)
@@ -369,6 +370,11 @@ def build_workout (token, pk, send=False, list=None, stravaActId=None):
             # Update strava activity for name and description
             act = client.update_activity(stravaActId, name=it.title, description=it.description)
             print ('updated act=',act)
+            # Update label to UI
+            Activity.objects.filter(id=activity.id).update(label=it.title)
+            title = it.title
+
+    sendProgress (strUser[0].channel_name, 100, list, title)
 
 @app.task
 def get_workout ( token, pk):
