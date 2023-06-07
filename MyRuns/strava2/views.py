@@ -14,7 +14,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from strava2.serializers import WorkoutSerializer, LapSerializer, ActivityItemSerializer
 from strava2.stravaModel import gpsCoord
-import sys, os
+import sys, os, time
 from celery.result import AsyncResult
 import json, logging
 
@@ -61,12 +61,6 @@ def login(request,loginId):
                                    redirect_uri=login.callbackURL)
     print ('url=',url)
     return redirect(url)
-    
-    #return redirect(login.url+'/?client_id='+login.clientID+'&redirect_uri='+login.callbackURL+'&response_type=code'+'&scope=read,read_all,activity:read_all,profile:read_all')
-    
-    #return redirect(login.url+'/?client_id='+login.clientID+'&redirect_uri='+login.callbackURL+'&response_type=code')
-    
-    #return redirect(login.url+'/?client_id='+login.clientID+'&redirect_uri='+login.callbackURL+'&response_type=code'+'&scope=activity:read_all,activity:write,profile:read_all')
 
 def auth(request):
     global _loginId
@@ -92,9 +86,20 @@ def auth(request):
         strUser.save()
     else:
         strUser.update(token=access_token['access_token'])
-    request.session['access_token'] = access_token['access_token']
+    request.session['access_token'] = access_token
+    request.session['client_id'] = login.clientID
+    request.session['client_secret'] = login.clientSecret
     #request.session['access_token'] = 'ff4f273a775a57ce1c7dcc837e18a059370d338c'
     return redirect('/strava2/activities')
+
+def getRefreshedToken(client_id, client_secret, access_token):
+    if time.time() > access_token['expires_at']:
+        client = Client()
+        refresh_response = client.refresh_access_token(client_id, client_secret,access_token['refresh_token'])
+        return refresh_response
+    else:
+        return access_token
+
     
 def getProgress(request):
     global _progress
@@ -150,7 +155,8 @@ def getActivitiesView(request):
     global _loginId
 
     #print (' >>>> getActivitiesView, get_queryset')
-    client = Client(request.session.get('access_token'))
+    client = Client(getRefreshedToken(request.session.get('client_id'), request.session.get('client_secret'),request.session.get('access_token'))['access_token'])
+    
     print (' >>>> getActivitiesView, client=',client)
     act = Activity.objects.filter(uid=client.get_athlete().id).order_by('-strTime')
     #print (' >>>> getActivitiesView, acts=',act)
@@ -197,7 +203,7 @@ class ActivitiesView(generic.ListView):
         #api_response = api_instance.get_logged_in_athlete_activities(before=before, after=after, page=page, per_page=per_page)
         #pprint(api_response)
         print ('ActivitiesView, access_token=',self.request.session.get('access_token'))
-        self.client = Client(self.request.session.get('access_token'))
+        self.client = Client(getRefreshedToken(self.request.session.get('client_id'), self.request.session.get('client_secret'),self.request.session.get('access_token'))['access_token'])
         return Activity.objects.filter(uid=self.client.get_athlete().id).order_by('-strTime')
      
     def get_context_data(self, **kwargs):
@@ -226,7 +232,7 @@ class WorkoutView(generic.DetailView):
         login = get_object_or_404(Login, pk=_loginId)
         print ("Session", self.request.session)
         print ('Token=',self.request.session.get('access_token'))
-        user = Client(self.request.session.get('access_token')).get_athlete()
+        user = Client(getRefreshedToken(self.request.session.get('client_id'), self.request.session.get('client_secret'),self.request.session.get('access_token'))['access_token']).get_athlete()
         print ("Workout lastname=",user.lastname)
         login.userName = user.lastname
         context['login'] = login
