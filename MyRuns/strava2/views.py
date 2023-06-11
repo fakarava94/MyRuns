@@ -93,13 +93,16 @@ def auth(request):
     return redirect('/strava2/activities')
 
 def getRefreshedToken(client_id, client_secret, access_token):
-    if time.time() > access_token['expires_at']:
-        client = Client()
-        refresh_response = client.refresh_access_token(client_id, client_secret,access_token['refresh_token'])
-        return refresh_response
+    log.info('  access_token=%s',access_token)
+    if access_token['expires_at']:
+        if time.time() > access_token['expires_at']:
+            client = Client()
+            refresh_response = client.refresh_access_token(client_id, client_secret,access_token['refresh_token'])
+            return refresh_response
+        else:
+            return access_token
     else:
-        return access_token
-
+        return redirect('/strava2/')
     
 def getProgress(request):
     global _progress
