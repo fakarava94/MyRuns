@@ -96,8 +96,11 @@ def getRefreshedToken(client_id, client_secret, access_token):
     log.info('  access_token=%s',access_token)
     if access_token['expires_at']:
         if time.time() > access_token['expires_at']:
+            log.info('  call refresh token !!!')
             client = Client()
             refresh_response = client.refresh_access_token(client_id, client_secret,access_token['refresh_token'])
+            strUser = StravaUser(uid=client.get_athlete().id, token=refresh_response['access_token'])
+            strUser.save()
             return refresh_response
         else:
             return access_token
@@ -196,15 +199,6 @@ class ActivitiesView(generic.ListView):
 
     def get_queryset(self):
     
-        #swagger_client.configuration.access_token = self.request.session.get('access_token')
-        #api_instance = swagger_client.ActivitiesApi()
-        #print ('api_instance=',api_instance)
-        #before = 56 # Integer | An epoch timestamp to use for filtering activities that have taken place before a certain time. (optional)
-        #after = 56 # Integer | An epoch timestamp to use for filtering activities that have taken place after a certain time. (optional)
-        #page = 56 # Integer | Page number. (optional)
-        #per_page = 56
-        #api_response = api_instance.get_logged_in_athlete_activities(before=before, after=after, page=page, per_page=per_page)
-        #pprint(api_response)
         print ('ActivitiesView, access_token=',self.request.session.get('access_token'))
         self.client = Client(getRefreshedToken(self.request.session.get('client_id'), self.request.session.get('client_secret'),self.request.session.get('access_token'))['access_token'])
         return Activity.objects.filter(uid=self.client.get_athlete().id).order_by('-strTime')
