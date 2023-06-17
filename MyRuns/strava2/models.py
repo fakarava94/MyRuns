@@ -29,7 +29,7 @@ class StravaUser(models.Model):
     resolution = models.IntegerField(default=1000)
     currentActIndex = models.IntegerField(default=0)
     nbActToRetreive = models.IntegerField(default=0)
-    channel_name = models.CharField(max_length=40,default='')
+    channel_name = models.CharField(max_length=120,default='')
     token = models.CharField(max_length=80,default='')
     
     def __str__(self):              # __unicode__ on Python 2
