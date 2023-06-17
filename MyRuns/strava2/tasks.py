@@ -100,7 +100,10 @@ def get_activities (token):
      
     # Update StavaUser
     lastUpdate=datetime.now()
-    forceUpdateDateTo=Login.objects.filter(id=1).forceUpdateDateTo
+    forceUpdateDateTo=datetime.now()
+    login=Login.objects.filter(id=1)
+    for l in login:
+        forceUpdateDateTo = l.forceUpdateDateTo
     strUser = StravaUser.objects.filter(uid=user.id)
     log.info ('strUser=%s',strUser)
     log.info ('forceUpdateDateTo=%s',forceUpdateDateTo)
