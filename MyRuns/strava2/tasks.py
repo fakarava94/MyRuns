@@ -114,7 +114,7 @@ def get_activities (token):
     limitList = 20
     initDate = datetime(2000, 1, 1)
     startDate=datetime.now()
-    if forceUpdateDateTo != initDate:
+    if forceUpdateDateTo == initDate:
         startDate = lastUpdate - timedelta(days=1)
     else:
         startDate = forceUpdateDateTo
