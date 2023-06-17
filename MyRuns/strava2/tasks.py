@@ -102,13 +102,13 @@ def get_activities (token):
     lastUpdate=datetime.now()
     forceUpdateDateTo=datetime.now()
     login=Login.objects.filter(id=1)
-    for l in login:
-        forceUpdateDateTo = l.forceUpdateDateTo
+    forceUpdateDateTo = login[0].forceUpdateDateTo
     strUser = StravaUser.objects.filter(uid=user.id)
     log.info ('strUser=%s',strUser)
     log.info ('forceUpdateDateTo=%s',forceUpdateDateTo)
-    for u in strUser:
-        lastUpdate = u.lastUpdate
+    log.info ('channel_name=%s',strUser[0].channel_name)
+    
+    lastUpdate = strUser[0].lastUpdate
     log.info ('lastUpdate=%s',lastUpdate)
         
     limitList = 20

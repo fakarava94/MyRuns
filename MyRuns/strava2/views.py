@@ -101,6 +101,7 @@ def getRefreshedToken(client_id, client_secret, access_token):
                     log.info('  call refresh token !!!')
                     client = Client()
                     refresh_response = client.refresh_access_token(client_id, client_secret,access_token['refresh_token'])
+                    log.info('  refresh_response=%s', refresh_response)
                     strUser = StravaUser(uid=client.get_athlete().id, token=refresh_response['access_token'])
                     strUser.save()
                     return refresh_response
@@ -254,8 +255,8 @@ class WorkoutDetail(APIView):
 
     def get(self, request, pk, format=None):
         global _progress
-        
-        result = get_workout.delay (request.session.get('access_token'),pk)
+        token = getRefreshedToken(self.request.session.get('client_id'), self.request.session.get('client_secret'),self.request.session.get('access_token'))['access_token']
+        result = get_workout.delay (token, pk)
         print ('return do_work, tidGetWorkout=',result)
         data = {'value': 0}
         return JsonResponse(data)
