@@ -94,16 +94,22 @@ def auth(request):
 
 def getRefreshedToken(client_id, client_secret, access_token):
     log.info('  access_token=%s',access_token)
-    if access_token['expires_at']:
-        if time.time() > access_token['expires_at']:
-            log.info('  call refresh token !!!')
-            client = Client()
-            refresh_response = client.refresh_access_token(client_id, client_secret,access_token['refresh_token'])
-            strUser = StravaUser(uid=client.get_athlete().id, token=refresh_response['access_token'])
-            strUser.save()
-            return refresh_response
+    if access_token is not None:
+        if 'expires_at' in access_token:
+            if access_token['expires_at']:
+                if time.time() > access_token['expires_at']:
+                    log.info('  call refresh token !!!')
+                    client = Client()
+                    refresh_response = client.refresh_access_token(client_id, client_secret,access_token['refresh_token'])
+                    strUser = StravaUser(uid=client.get_athlete().id, token=refresh_response['access_token'])
+                    strUser.save()
+                    return refresh_response
+                else:
+                    return access_token
+            else:
+                return redirect('/strava2/')
         else:
-            return access_token
+            return redirect('/strava2/')
     else:
         return redirect('/strava2/')
     

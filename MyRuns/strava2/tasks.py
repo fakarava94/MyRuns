@@ -100,17 +100,23 @@ def get_activities (token):
      
     # Update StavaUser
     lastUpdate=datetime.now()
+    forceUpdateDateTo=datetime.now()
     strUser = StravaUser.objects.filter(uid=user.id)
     log.info ('strUser=%s',strUser)
     for u in strUser:
         lastUpdate = u.lastUpdate
+        forceUpdateDateTo = u.forceUpdateDateTo
     log.info ('lastUpdate=%s',lastUpdate)
         
     limitList = 20
-    #d = datetime(2023, 4, 1)
-    date_1_day_ago = lastUpdate - timedelta(days=1)
+    initDate = datetime(2000, 1, 1)
+    startDate=datetime.now()
+    if forceUpdateDateTo != initDate:
+        startDate = lastUpdate - timedelta(days=1)
+    else:
+        startDate = forceUpdateDateTo
     
-    activities = client.get_activities(after=date_1_day_ago,limit=limitList)
+    activities = client.get_activities(after=startDate,limit=limitList)
     #activities = client.get_activities(after=d,limit=limitList)
     act = None
     nbItem = 0

@@ -13,6 +13,7 @@ class Login(models.Model):
     dateLogin = models.DateField(timezone.now())
     userName = models.CharField(max_length=20,default='')
     lastUpdate = models.DateTimeField(default=date(2000,1,1))
+    forceUpdateDateTo = models.DateTimeField(default=date(2000,1,1))
 
     def __str__(self):              # __unicode__ on Python 2
         return self.name
