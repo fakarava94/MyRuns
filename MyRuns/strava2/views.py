@@ -62,6 +62,20 @@ def login(request,loginId):
     print ('url=',url)
     return redirect(url)
 
+def subscribeCB (request):
+    global _loginId
+    log.debug ('  >>>> subscribe callback')
+    if request.method == 'GET':
+        log.debug ('  >>>> GET request')
+        mode = request.GET.get('hub.mode')
+        token = request.GET.get('hub.verify_token')
+        challenge = request.GET.get('hub.challenge')
+    elif request.method == 'POST':
+        log.debug ('  >>>> POST')
+
+    data = {"hub.challenge":challenge}
+    return JsonResponse(data)
+
 def auth(request):
     global _loginId
     print ("Auth")
@@ -89,7 +103,9 @@ def auth(request):
     request.session['access_token'] = access_token
     request.session['client_id'] = login.clientID
     request.session['client_secret'] = login.clientSecret
-    #request.session['access_token'] = 'ff4f273a775a57ce1c7dcc837e18a059370d338c'
+
+    client.create_subscription(login.clientID, login.clientSecret, subscribeCB, object_type=u'activity', aspect_type=u'create', verify_token=u'STRAVA')
+
     return redirect('/strava2/activities')
 
 def getRefreshedToken(client_id, client_secret, access_token):

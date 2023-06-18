@@ -7,6 +7,7 @@ from . import views
 app_name = 'strava2'
 urlpatterns = [
     re_path(r'^$', views.directLogin, name='directLogin'),
+    re_path(r'subscribeCB.*$',views.subscribeCB, name='subscribeCB'),
     re_path(r'^(?P<loginId>[0-9]+)/$', views.login, name='login'),
     re_path(r'activities/.*$', views.ActivitiesView.as_view(), name='activities'),
     re_path(r'getProgress/.*$', views.getProgress, name='getProgress'),
