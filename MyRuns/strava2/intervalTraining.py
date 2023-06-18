@@ -248,7 +248,9 @@ def getIntervalTraining (workoutId):
                     title=title+sep+s.title
 
             hiAvSpeed = sum(it.hiDist)/int(it.hiTotalTime)
-            descr=descr+'\nVitesse moyenne des intervalles: %s\nDistance totale des intervalles: %sm\nTemps total des intervalles: %s' % (convertSpeed2Pace(hiAvSpeed), (round(sum(it.hiDist),0)), it.hiTotalTime)
+            totalHiTime = time.strftime('%M:%S',time.gmtime(it.hiTotalTime))
+            avrgHiTime = time.strftime('%M:%S',time.gmtime(it.hiTotalTime/len(it.hiTime)))
+            descr=descr+'\nVitesse moyenne des intervalles: %s\nDistance totale des intervalles: %sm\nTemps total des intervalles: %s\nTemps moyen des intervalles: %s' % (convertSpeed2Pace(hiAvSpeed), (round(sum(it.hiDist),0)), totalHiTime, avrgHiTime)
             log.debug('title=%s',title)
             log.debug('descr=%s',descr)
             itDescr.title=title
