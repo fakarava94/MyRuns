@@ -62,22 +62,6 @@ def login(request,loginId):
     print ('url=',url)
     return redirect(url)
 
-def subscribeCB (request):
-    global _loginId
-    log.debug ('  >>>> subscribe callback')
-    challenge = ''
-    if request.method == 'GET':
-        log.debug ('  >>>> GET request')
-        mode = request.GET.get('hub.mode')
-        token = request.GET.get('hub.verify_token')
-        challenge = request.GET.get('hub.challenge')
-        log.debug ('  >>>> challenge=%s',challenge)
-    elif request.method == 'POST':
-        log.debug ('  >>>> POST')
-
-    data = {"hub.challenge":challenge}
-    return JsonResponse(data)
-
 def auth(request):
     global _loginId
     print ("Auth")
@@ -129,6 +113,25 @@ def getRefreshedToken(client_id, client_secret, access_token):
             return redirect('/strava2/')
     else:
         return redirect('/strava2/')
+    
+def subscribeCB (request):
+    global _loginId
+    log.debug ('  >>>> subscribe callback')
+    challenge = ''
+    if request.method == 'GET':
+        log.debug ('  >>>> GET request')
+        mode = request.GET.get('hub.mode')
+        token = request.GET.get('hub.verify_token')
+        challenge = request.GET.get('hub.challenge')
+        log.debug ('  >>>> challenge=%s',challenge)
+        log.debug ('  >>>> token=%s',token)
+        data = {"hub.challenge":challenge}
+        return JsonResponse(data)
+    elif request.method == 'POST':
+        log.debug ('  >>>> POST')
+        log.debug("webhook event received! => request %s", request)
+        # get_activities.delay (token)
+        return HttpResponse(status=200)
     
 def getProgress(request):
     global _progress
