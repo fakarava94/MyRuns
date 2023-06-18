@@ -131,6 +131,8 @@ def subscribeCB (request):
     elif request.method == 'POST':
         log.debug ('  >>>> POST')
         log.debug("webhook event received! => request %s", request.__dict__)
+        data = request.get_json()
+        log.debug("webhook event received! => body %s", data)
         login=Login.objects.filter(id=1)
         #strUser = StravaUser.objects.filter(uid=user.id)
         #client = Client(getRefreshedToken(login[0].clientID, login[0].clientSecret,request.session.get('access_token'))['access_token'])
