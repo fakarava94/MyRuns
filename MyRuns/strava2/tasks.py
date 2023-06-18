@@ -582,6 +582,6 @@ def checkCeleryAvailibility ():
 def subscribeToStrava (token):
     client = Client(token)
     login=Login.objects.filter(id=1)
-    subscribeUrl = re.sub('callback', 'subscribeCB',  login.callbackURL)  
+    subscribeUrl = re.sub('callback', 'subscribeCB',  login[0].callbackURL)  
     log.info ('subscribeUrl=%s',subscribeUrl)
-    client.create_subscription(login.clientID, login.clientSecret, subscribeUrl, verify_token=u'STRAVA')
+    client.create_subscription(login[0].clientID, login[0].clientSecret, subscribeUrl, verify_token=u'STRAVA')
