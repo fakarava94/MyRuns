@@ -113,7 +113,8 @@ def getRefreshedToken(client_id, client_secret, access_token):
             return redirect('/strava2/')
     else:
         return redirect('/strava2/')
-    
+
+@csrf_exempt
 def subscribeCB (request):
     global _loginId
     log.debug ('  >>>> subscribe callback')
