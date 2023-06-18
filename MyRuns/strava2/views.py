@@ -82,10 +82,10 @@ def auth(request):
     if not strUser.exists():
         print ('create user', )
         strUser = StravaUser(uid=user.id, lastname=user.lastname, firstname=user.firstname, \
-            lastUpdate=(datetime.now()-timedelta(days=30)), token=access_token['access_token'])
+            lastUpdate=(datetime.now()-timedelta(days=30)), token=access_token['access_token'], refresh_token=access_token['refresh_token'],token_expires_at=access_token['expires_at'])
         strUser.save()
     else:
-        strUser.update(token=access_token['access_token'])
+        strUser.update(token=access_token['access_token'],refresh_token=access_token['refresh_token'],token_expires_at=access_token['expires_at'])
     request.session['access_token'] = access_token
     request.session['client_id'] = login.clientID
     request.session['client_secret'] = login.clientSecret
@@ -102,7 +102,7 @@ def getRefreshedToken(client_id, client_secret, access_token):
                     client = Client()
                     refresh_response = client.refresh_access_token(client_id, client_secret,access_token['refresh_token'])
                     log.info('  refresh_response=%s', refresh_response)
-                    strUser = StravaUser(uid=client.get_athlete().id, token=refresh_response['access_token'])
+                    strUser = StravaUser(uid=client.get_athlete().id, token=refresh_response['access_token'], refresh_token=access_token['refresh_token'],token_expires_at=access_token['expires_at'])
                     strUser.save()
                     return refresh_response
                 else:
@@ -130,7 +130,10 @@ def subscribeCB (request):
         return JsonResponse(data)
     elif request.method == 'POST':
         log.debug ('  >>>> POST')
-        log.debug("webhook event received! => request %s", request)
+        log.debug("webhook event received! => request %s", request.__dict__)
+        login=Login.objects.filter(id=1)
+        #strUser = StravaUser.objects.filter(uid=user.id)
+        #client = Client(getRefreshedToken(login[0].clientID, login[0].clientSecret,request.session.get('access_token'))['access_token'])
         # get_activities.delay (token)
         return HttpResponse(status=200)
     

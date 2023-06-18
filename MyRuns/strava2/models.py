@@ -31,6 +31,8 @@ class StravaUser(models.Model):
     nbActToRetreive = models.IntegerField(default=0)
     channel_name = models.CharField(max_length=120,default='')
     token = models.CharField(max_length=80,default='')
+    refresh_token = models.CharField(max_length=80,default='')
+    token_expires_at = models.IntegerField(default=0)
     
     def __str__(self):              # __unicode__ on Python 2
         return str(self.firstname+'_'+self.lastname)
