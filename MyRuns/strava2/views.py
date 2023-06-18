@@ -107,7 +107,7 @@ def auth(request):
     subscribeUrl = re.sub('callback', 'subscribeCB',  login.callbackURL)  
     # subscribeUrl = 'https://django-srv-s9kn.onrender.com/strava2/subscribeCB'
     log.info ('subscribeUrl=%s',subscribeUrl)
-    client.create_subscription(login.clientID, login.clientSecret, subscribeUrl, object_type=u'activity', aspect_type=u'create', verify_token=u'STRAVA')
+    client.create_subscription(login.clientID, login.clientSecret, subscribeUrl, verify_token=u'STRAVA')
 
     return redirect('/strava2/activities')
 
