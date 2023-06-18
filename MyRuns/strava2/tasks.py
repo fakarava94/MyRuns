@@ -577,4 +577,11 @@ def checkCeleryAvailibility ():
         r = requests.get('https://django-srv-s9kn.onrender.com/strava2/activities')
         log.info('  >>>> status getActivities= %s',r.status_code)
     currentTime=time.time()
-    
+
+@app.task
+def subscribeToStrava (token):
+    client = Client(token)
+    login=Login.objects.filter(id=1)
+    subscribeUrl = re.sub('callback', 'subscribeCB',  login.callbackURL)  
+    log.info ('subscribeUrl=%s',subscribeUrl)
+    client.create_subscription(login.clientID, login.clientSecret, subscribeUrl, verify_token=u'STRAVA')

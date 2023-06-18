@@ -2,7 +2,7 @@ import json
 import logging
 from channels.generic.websocket import AsyncWebsocketConsumer
 from strava2.models import StravaUser
-from strava2.tasks import get_activities, get_workout, processJsonDataBackup
+from strava2.tasks import get_activities, get_workout, processJsonDataBackup, subscribeToStrava
 
 log = logging.getLogger(__name__)
 
@@ -37,6 +37,7 @@ class Consumers(AsyncWebsocketConsumer):
         log.info ('receive, token=%s',token)
         if data['type'] == 'Authentication':
             self.result = get_activities.delay (token)
+            self.result = subscribeToStrava.delay (token)
             log.info ('get_activities task result=%s',self.result)
         elif data['type'] == 'workout':
             log.info ('get Workout message')

@@ -65,11 +65,13 @@ def login(request,loginId):
 def subscribeCB (request):
     global _loginId
     log.debug ('  >>>> subscribe callback')
+    challenge = ''
     if request.method == 'GET':
         log.debug ('  >>>> GET request')
         mode = request.GET.get('hub.mode')
         token = request.GET.get('hub.verify_token')
         challenge = request.GET.get('hub.challenge')
+        log.debug ('  >>>> challenge=%s',challenge)
     elif request.method == 'POST':
         log.debug ('  >>>> POST')
 
