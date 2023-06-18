@@ -6,7 +6,7 @@ uname -a
 pip install --upgrade pip
 pip install -r requirements.txt
 python manage.py collectstatic --no-input
-python manage.py makemigrations
+python manage.py makemigrations strava2
 python manage.py migrate 
 
 #python manage.py shell << FF
