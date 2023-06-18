@@ -104,11 +104,6 @@ def auth(request):
     request.session['client_id'] = login.clientID
     request.session['client_secret'] = login.clientSecret
 
-    subscribeUrl = re.sub('callback', 'subscribeCB',  login.callbackURL)  
-    # subscribeUrl = 'https://django-srv-s9kn.onrender.com/strava2/subscribeCB'
-    log.info ('subscribeUrl=%s',subscribeUrl)
-    client.create_subscription(login.clientID, login.clientSecret, subscribeUrl, verify_token=u'STRAVA')
-
     return redirect('/strava2/activities')
 
 def getRefreshedToken(client_id, client_secret, access_token):
@@ -196,6 +191,10 @@ def getActivitiesView(request):
     result = AsyncResult(tid)
     print (' >>>> getActivitiesView, state=',result.state)
     print (' >>>> getActivitiesView, meta_data=',result.info)
+
+    subscribeUrl = re.sub('callback', 'subscribeCB',  login.callbackURL)  
+    log.info ('subscribeUrl=%s',subscribeUrl)
+    client.create_subscription(login.clientID, login.clientSecret, subscribeUrl, verify_token=u'STRAVA')
 
     actList = []
     for actItem in act:
