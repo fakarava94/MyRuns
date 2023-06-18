@@ -36,8 +36,9 @@ class Consumers(AsyncWebsocketConsumer):
             token = u.token
         log.info ('receive, token=%s',token)
         if data['type'] == 'Authentication':
-            self.result = get_activities.delay (token)
             self.result = subscribeToStrava.delay (token)
+            log.info ('return subscribeToStrava, tid=%s',self.result)
+            self.result = get_activities.delay (token)
             log.info ('get_activities task result=%s',self.result)
         elif data['type'] == 'workout':
             log.info ('get Workout message')

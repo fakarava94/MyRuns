@@ -194,10 +194,6 @@ def getActivitiesView(request):
     print (' >>>> getActivitiesView, state=',result.state)
     print (' >>>> getActivitiesView, meta_data=',result.info)
 
-    subscribeUrl = re.sub('callback', 'subscribeCB',  login.callbackURL)  
-    log.info ('subscribeUrl=%s',subscribeUrl)
-    client.create_subscription(login.clientID, login.clientSecret, subscribeUrl, verify_token=u'STRAVA')
-
     actList = []
     for actItem in act:
         #print (actItem)
