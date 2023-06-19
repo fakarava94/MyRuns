@@ -16,7 +16,7 @@ delete from strava2_elevation where workout_id=:'workoutid';
 delete from strava2_gpscoord where workout_id=:'workoutid';
 delete from strava2_speed where workout_id=:'workoutid';
 delete from strava2_split where workout_id=:'workoutid';
-delete from strava2_workout where id=:'workoutid';
 delete from strava2_activity where workout_id=:'workoutid';
+delete from strava2_workout where id=:'workoutid';
 update strava2_login set "lastUpdate"=:'updateDate' where id=1;
 FF
