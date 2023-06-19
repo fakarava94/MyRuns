@@ -135,8 +135,8 @@ def subscribeCB (request):
         log.debug("webhook event received! => body %s", data)
         login=Login.objects.filter(id=1)
         strUser = StravaUser.objects.filter(data['owner_id'])
-        client = Client(getRefreshedToken(login[0].clientID, login[0].clientSecret,strUser[0].refresh_token)
-        get_activities.delay (token)
+        token = getRefreshedToken(login[0].clientID, login[0].clientSecret,strUser[0].refresh_token)
+        get_activities.delay (token['access_token'])
         return HttpResponse(status=200)
     
 def getProgress(request):
