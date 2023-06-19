@@ -382,6 +382,8 @@ def build_workout (token, pk, send=False, list=None, stravaActId=None):
             # Update label to UI
             Activity.objects.filter(id=activity.id).update(label=it.title)
             title = it.title
+        else:
+            act = client.update_activity(stravaActId, description='Hook raised', trainer=True)
 
     sendProgress (strUser[0].channel_name, 100, list, title)
 
