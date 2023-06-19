@@ -28,6 +28,7 @@ lock = multiprocessing.Lock()
 log = logging.getLogger(__name__)
 app = Celery('tasks', broker=os.getenv("CELERY_BROKER_URL"))
 currentTime=time.time()
+initDone=False
 
 def getSpeed (speed):
     speed = 100/speed
@@ -557,8 +558,18 @@ def processFit ( loginId, token, file):
 
 @app.task(name='checkCeleryAvailibility')
 def checkCeleryAvailibility ():
-    global currentTime
+    global currentTime, initDone
     log.info('  >>>> checkCeleryAvailibility')
+
+    # call all subscribtions at statup
+    try:
+        if not initDone:
+            print ('  >>>> Init subscriptions ...')
+            
+            initdone = True
+    except RuntimeError as e:
+        print ("Init subscriptions error",e)
+
     try:
         r = requests.get('https://mycelery.onrender.com')
         log.info('  >>>> body= %s',r.content)
@@ -572,13 +583,6 @@ def checkCeleryAvailibility ():
         log.info('  >>>> status ping= %s',r.status_code)
     except RuntimeError as e:
         print ("Check celery error ",e)
-
-    # Activities synchro each hour
-    deltatime=currentTime-time.time()
-    if deltatime >= 3600:
-        r = requests.get('https://django-srv-s9kn.onrender.com/strava2/activities')
-        log.info('  >>>> status getActivities= %s',r.status_code)
-    currentTime=time.time()
 
 @app.task
 def subscribeToStrava (token):

@@ -143,7 +143,7 @@ def subscribeCB (request):
         token['refresh_token'] = strUser[0].refresh_token
         token['expires_at'] = strUser[0].token_expires_at
         refresh_token = getRefreshedToken(login[0].clientID, login[0].clientSecret, token)
-        get_activities.delay (refresh_token['access_token'])
+        get_activities..apply_async(args=[refresh_token['access_token']], countdown=20)
         return HttpResponse(status=200)
     
 def getProgress(request):
