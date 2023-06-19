@@ -138,8 +138,12 @@ def subscribeCB (request):
         uid=body['owner_id']
         log.debug("uid=%s",uid)
         strUser = StravaUser.objects.filter(uid=int(uid))
-        token = getRefreshedToken(login[0].clientID, login[0].clientSecret,strUser[0].refresh_token)
-        get_activities.delay (token['access_token'])
+        token = {}
+        token['access_token'] = strUser[0].token
+        token['refresh_token'] = strUser[0].refresh_token
+        token['expires_at'] = strUser[0].token_expires_at
+        refresh_token = getRefreshedToken(login[0].clientID, login[0].clientSecret, token)
+        get_activities.delay (refresh_token['access_token'])
         return HttpResponse(status=200)
     
 def getProgress(request):
