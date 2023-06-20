@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from strava2.models import Login, Activity, Workout, Lap, GpsCoord, HeartRate, \
     Speed, Elevation, Distance, Split, StravaUser
 from strava2.tasks import get_activities, processFit, get_workout
+from strava2.common import getRefreshedToken
 from django.views import generic
 from django.http import JsonResponse
 from stravalib import Client
@@ -92,27 +93,7 @@ def auth(request):
 
     return redirect('/strava2/activities')
 
-def getRefreshedToken(client_id, client_secret, access_token):
-    log.info('  access_token=%s',access_token)
-    if access_token is not None:
-        if 'expires_at' in access_token:
-            if access_token['expires_at']:
-                if time.time() > access_token['expires_at']:
-                    log.info('  call refresh token !!!')
-                    client = Client()
-                    refresh_response = client.refresh_access_token(client_id, client_secret,access_token['refresh_token'])
-                    log.info('  refresh_response=%s', refresh_response)
-                    strUser = StravaUser(uid=client.get_athlete().id, token=refresh_response['access_token'], refresh_token=access_token['refresh_token'],token_expires_at=access_token['expires_at'])
-                    strUser.save()
-                    return refresh_response
-                else:
-                    return access_token
-            else:
-                return redirect('/strava2/')
-        else:
-            return redirect('/strava2/')
-    else:
-        return redirect('/strava2/')
+
 
 @csrf_exempt
 def subscribeCB (request):

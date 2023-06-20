@@ -11,7 +11,7 @@ from strava2.models import Login, Activity, Workout, Lap, GpsCoord, HeartRate, \
     Speed, Elevation, Distance, Split, StravaUser
 from strava2.serializers import WorkoutSerializer, LapSerializer, ActivityItemSerializer
 from strava2.intervalTraining import getIntervalTraining
-from strava2.views import getRefreshedToken
+from strava2.common import getRefreshedToken
 
 import re, time
 from datetime import datetime, date, timedelta
