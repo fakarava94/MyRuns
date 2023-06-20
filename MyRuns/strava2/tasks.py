@@ -575,7 +575,7 @@ def checkCeleryAvailibility ():
                 token['expires_at'] = user.token_expires_at
                 refresh_token = getRefreshedToken(login[0].clientID, login[0].clientSecret, token)
                 subscribeToStrava(refresh_token['access_token'])
-            initdone = True
+            initDone = True
     except RuntimeError as e:
         print ("Init subscriptions error",e)
 
