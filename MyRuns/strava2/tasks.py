@@ -384,7 +384,7 @@ def build_workout (token, pk, send=False, list=None, stravaActId=None):
             Activity.objects.filter(id=activity.id).update(label=it.title)
             title = it.title
         else:
-            act = client.update_activity(stravaActId, description='Hook raised', trainer=True)
+            act = client.update_activity(stravaActId, description='WebHook Event')
 
     sendProgress (strUser[0].channel_name, 100, list, title)
 
