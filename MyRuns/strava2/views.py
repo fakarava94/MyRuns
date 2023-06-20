@@ -239,8 +239,11 @@ class ActivitiesView(generic.ListView):
     def get_queryset(self):
     
         print ('ActivitiesView, access_token=',self.request.session.get('access_token'))
-        self.client = Client(getRefreshedToken(self.request.session.get('client_id'), self.request.session.get('client_secret'),self.request.session.get('access_token'))['access_token'])
-        return Activity.objects.filter(uid=self.client.get_athlete().id).order_by('-strTime')
+        if self.request.session.get('access_token') is None:
+            return None
+        else:
+            self.client = Client(getRefreshedToken(self.request.session.get('client_id'), self.request.session.get('client_secret'),self.request.session.get('access_token'))['access_token'])
+            return Activity.objects.filter(uid=self.client.get_athlete().id).order_by('-strTime')
      
     def get_context_data(self, **kwargs):
         context = super(ActivitiesView, self).get_context_data(**kwargs)
