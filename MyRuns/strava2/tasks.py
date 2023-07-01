@@ -562,23 +562,6 @@ def checkCeleryAvailibility ():
     global currentTime
     log.info('  >>>> checkCeleryAvailibility')
 
-    # call all subscribtions at statup
-    try:
-        if not initDone:
-            print ('  >>>> Init subscriptions ...')
-            login=Login.objects.filter(id=1)
-            for user in StravaUser.objects.all():
-                print(user)
-                token = {}
-                token['access_token'] = user.token
-                token['refresh_token'] = user.refresh_token
-                token['expires_at'] = user.token_expires_at
-                refresh_token = getRefreshedToken(login[0].clientID, login[0].clientSecret, token)
-                subscribeToStrava(refresh_token['access_token'])
-            initDone = True
-    except RuntimeError as e:
-        print ("Init subscriptions error",e)
-
     try:
         r = requests.get('https://mycelery.onrender.com')
         log.info('  >>>> body= %s',r.content)
