@@ -568,17 +568,10 @@ def checkCeleryAvailibility ():
     if initDone is not None:
         if initDone == 0:
             r.set ('INIT', 1)
-            login=Login.objects.filter(id=1)
-            for user in StravaUser.objects.all():
-                print(user)
-                token = {}
-                token['access_token'] = user.token
-                token['refresh_token'] = user.refresh_token
-                token['expires_at'] = user.token_expires_at
-                refresh_token = getRefreshedToken(login[0].clientID, login[0].clientSecret, token)
-
-                print('refresh_token=', refresh_token)
-                subscribeToStrava.delay (refresh_token['access_token'])
+            subscribeToStrava.delay ()
+    else:
+        r.set ('INIT', 1)
+        subscribeToStrava.delay ()
 
     try:
         r = requests.get('https://mycelery.onrender.com')
@@ -596,8 +589,17 @@ def checkCeleryAvailibility ():
 
 @app.task
 def subscribeToStrava (token):
-    client = Client(token)
     login=Login.objects.filter(id=1)
-    subscribeUrl = re.sub('callback', 'subscribeCB',  login[0].callbackURL)  
-    log.info ('subscribeUrl=%s',subscribeUrl)
-    client.create_subscription(login[0].clientID, login[0].clientSecret, subscribeUrl, verify_token=u'STRAVA')
+    for user in StravaUser.objects.all():
+        print(user)
+        token = {}
+        token['access_token'] = user.token
+        token['refresh_token'] = user.refresh_token
+        token['expires_at'] = user.token_expires_at
+        refresh_token = getRefreshedToken(login[0].clientID, login[0].clientSecret, token)
+
+        print('refresh_token=', refresh_token)
+        client = Client(refresh_token['access_token'])
+        subscribeUrl = re.sub('callback', 'subscribeCB',  login[0].callbackURL)  
+        log.info ('subscribeUrl=%s',subscribeUrl)
+        client.create_subscription(login[0].clientID, login[0].clientSecret, subscribeUrl, verify_token=u'STRAVA')
