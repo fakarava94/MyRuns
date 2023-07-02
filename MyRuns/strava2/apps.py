@@ -1,15 +1,16 @@
 from django.apps import AppConfig
-from stravalib import Client
-from strava2.models import Login, StravaUser
-from strava2.common import getRefreshedToken
 import re, logging
 
 log = logging.getLogger(__name__)
+
 class Strava2Config(AppConfig):
     name = 'strava2'
     run_already = False
 
     def ready(self):
+        from stravalib import Client
+        from strava2.models import Login, StravaUser
+        from strava2.common import getRefreshedToken
         if not self.run_already:
             print (' Application is READY !!!')
             self.run_already = True
