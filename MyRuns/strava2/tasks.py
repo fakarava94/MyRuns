@@ -13,7 +13,7 @@ from strava2.serializers import WorkoutSerializer, LapSerializer, ActivityItemSe
 from strava2.intervalTraining import getIntervalTraining
 from strava2.common import getRefreshedToken
 
-import re, time
+import re, time, redis
 from datetime import datetime, date, timedelta
 from stravalib import Client
 import logging
@@ -561,6 +561,24 @@ def processFit ( loginId, token, file):
 def checkCeleryAvailibility ():
     global currentTime
     log.info('  >>>> checkCeleryAvailibility')
+
+    REDIS_URL = os.environ.get('CELERY_BROKER_URL', '')
+    r = redis.from_url (REDIS_URL)
+    initDone = r.get ('INIT')
+    if initDone is not None:
+        if initDone == 0:
+            r.set ('INIT', 1)
+            login=Login.objects.filter(id=1)
+            for user in StravaUser.objects.all():
+                print(user)
+                token = {}
+                token['access_token'] = user.token
+                token['refresh_token'] = user.refresh_token
+                token['expires_at'] = user.token_expires_at
+                refresh_token = getRefreshedToken(login[0].clientID, login[0].clientSecret, token)
+
+                print('refresh_token=', refresh_token)
+                subscribeToStrava.delay (refresh_token['access_token'])
 
     try:
         r = requests.get('https://mycelery.onrender.com')
