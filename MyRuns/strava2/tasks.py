@@ -573,6 +573,7 @@ def checkCeleryAvailibility ():
             subscribeToStrava.delay ()
     else:
         log.info('Set initDone to 1')
+        r.set ('INIT', '1')
         subscribeToStrava.delay ()
 
     try:
