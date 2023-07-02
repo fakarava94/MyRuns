@@ -81,7 +81,7 @@ def auth(request):
     user = client.get_athlete()
     strUser = StravaUser.objects.filter(uid=user.id)
     if not strUser.exists():
-        print ('create user', )
+        print ('  >>> create user !!!')
         strUser = StravaUser(uid=user.id, lastname=user.lastname, firstname=user.firstname, \
             lastUpdate=(datetime.now()-timedelta(days=30)), token=access_token['access_token'], refresh_token=access_token['refresh_token'], token_expires_at=access_token['expires_at'])
         strUser.save()

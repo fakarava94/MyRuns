@@ -18,3 +18,4 @@ fitparse
 whitenoise
 websockets
 daphne
+redis

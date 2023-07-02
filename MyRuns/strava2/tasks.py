@@ -602,4 +602,7 @@ def subscribeToStrava (token):
         client = Client(refresh_token['access_token'])
         subscribeUrl = re.sub('callback', 'subscribeCB',  login[0].callbackURL)  
         log.info ('subscribeUrl=%s',subscribeUrl)
-        client.create_subscription(login[0].clientID, login[0].clientSecret, subscribeUrl, verify_token=u'STRAVA')
+        try:
+            client.create_subscription(login[0].clientID, login[0].clientSecret, subscribeUrl, verify_token=u'STRAVA')
+        except RuntimeError as e:
+            print ("create_subscription error ",e)
