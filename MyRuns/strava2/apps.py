@@ -16,7 +16,7 @@ class Strava2Config(AppConfig):
             r = redis.from_url (REDIS_URL)
             initDone = r.get ('INIT')
             if initDone is not None:
-                r.set ('INIT', 0)
+                r.set ('INIT', '0')
             else:
-                r.set ('INIT', 0)
+                r.set ('INIT', '0')
 

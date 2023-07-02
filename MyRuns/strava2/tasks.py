@@ -567,11 +567,12 @@ def checkCeleryAvailibility ():
     initDone = r.get ('INIT')
     log.info('  >>>> initDone= %s',initDone)
     if initDone is not None:
-        if initDone == 0:
-            r.set ('INIT', 1)
+        if initDone == '0':
+            log.info('Set initDone to 1')
+            r.set ('INIT', '1')
             subscribeToStrava.delay ()
     else:
-        r.set ('INIT', 1)
+        log.info('Set initDone to 1')
         subscribeToStrava.delay ()
 
     try:
@@ -591,6 +592,7 @@ def checkCeleryAvailibility ():
 @app.task
 def subscribeToStrava (token):
     login=Login.objects.filter(id=1)
+    log.info('subscribeToStrava, token=%s', token)
     if token in None:
         for user in StravaUser.objects.all():
             print(user)
