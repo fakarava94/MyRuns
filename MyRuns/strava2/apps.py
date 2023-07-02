@@ -11,6 +11,8 @@ class Strava2Config(AppConfig):
         from stravalib import Client
         from strava2.models import Login, StravaUser
         from strava2.common import getRefreshedToken
+        from strava2.tasks import subscribeToStrava
+
         if not self.run_already:
             print (' Application is READY !!!')
             self.run_already = True
@@ -26,11 +28,13 @@ class Strava2Config(AppConfig):
 
                 print('refresh_token=', refresh_token)
 
-                client = Client(refresh_token['access_token'])
-                login=Login.objects.filter(id=1)
+                subscribeToStrava.delay (refresh_token['access_token'])
 
-                subscribeUrl = re.sub('callback', 'subscribeCB',  login[0].callbackURL)
-                print('subscribeUrl=', subscribeUrl)
-                log.info ('subscribeUrl=%s',subscribeUrl)
-                
-                client.create_subscription(login[0].clientID, login[0].clientSecret, subscribeUrl, verify_token=u'STRAVA')
+                # client = Client(refresh_token['access_token'])
+                # login=Login.objects.filter(id=1)
+
+                # subscribeUrl = re.sub('callback', 'subscribeCB',  login[0].callbackURL)
+                # print('subscribeUrl=', subscribeUrl)
+                # log.info ('subscribeUrl=%s',subscribeUrl)
+
+                # client.create_subscription(login[0].clientID, login[0].clientSecret, subscribeUrl, verify_token=u'STRAVA')
