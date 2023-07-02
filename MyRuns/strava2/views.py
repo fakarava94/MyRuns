@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.http import HttpResponse
 from strava2.models import Login, Activity, Workout, Lap, GpsCoord, HeartRate, \
     Speed, Elevation, Distance, Split, StravaUser
-from strava2.tasks import get_activities, processFit, get_workout
+from strava2.tasks import get_activities, processFit, get_workout, subscribeToStrava
 from strava2.common import getRefreshedToken
 from django.views import generic
 from django.http import JsonResponse
@@ -85,6 +85,7 @@ def auth(request):
         strUser = StravaUser(uid=user.id, lastname=user.lastname, firstname=user.firstname, \
             lastUpdate=(datetime.now()-timedelta(days=30)), token=access_token['access_token'], refresh_token=access_token['refresh_token'], token_expires_at=access_token['expires_at'])
         strUser.save()
+        subscribeToStrava.delay (access_token['access_token'])
     else:
         strUser.update(token=access_token['access_token'],refresh_token=access_token['refresh_token'],token_expires_at=access_token['expires_at'])
     request.session['access_token'] = access_token

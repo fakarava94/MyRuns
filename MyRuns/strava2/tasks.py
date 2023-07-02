@@ -565,6 +565,7 @@ def checkCeleryAvailibility ():
     REDIS_URL = os.environ.get('CELERY_BROKER_URL', '')
     r = redis.from_url (REDIS_URL)
     initDone = r.get ('INIT')
+    log.info('  >>>> initDone= %s',initDone)
     if initDone is not None:
         if initDone == 0:
             r.set ('INIT', 1)
@@ -590,16 +591,25 @@ def checkCeleryAvailibility ():
 @app.task
 def subscribeToStrava (token):
     login=Login.objects.filter(id=1)
-    for user in StravaUser.objects.all():
-        print(user)
-        token = {}
-        token['access_token'] = user.token
-        token['refresh_token'] = user.refresh_token
-        token['expires_at'] = user.token_expires_at
-        refresh_token = getRefreshedToken(login[0].clientID, login[0].clientSecret, token)
+    if token in None:
+        for user in StravaUser.objects.all():
+            print(user)
+            token = {}
+            token['access_token'] = user.token
+            token['refresh_token'] = user.refresh_token
+            token['expires_at'] = user.token_expires_at
+            refresh_token = getRefreshedToken(login[0].clientID, login[0].clientSecret, token)
 
-        print('refresh_token=', refresh_token)
-        client = Client(refresh_token['access_token'])
+            print('refresh_token=', refresh_token)
+            client = Client(refresh_token['access_token'])
+            subscribeUrl = re.sub('callback', 'subscribeCB',  login[0].callbackURL)  
+            log.info ('subscribeUrl=%s',subscribeUrl)
+            try:
+                client.create_subscription(login[0].clientID, login[0].clientSecret, subscribeUrl, verify_token=u'STRAVA')
+            except RuntimeError as e:
+                print ("create_subscription error ",e)
+    else:
+        client = Client(token)
         subscribeUrl = re.sub('callback', 'subscribeCB',  login[0].callbackURL)  
         log.info ('subscribeUrl=%s',subscribeUrl)
         try:
