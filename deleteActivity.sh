@@ -7,7 +7,7 @@ wid=$1
 echo "wid=$1"
 updateDate=$(date -d "1 days ago" +%Y-%m-%d)
 echo updateDate=$updateDate
-PGPASSWORD=g3OCMXtsgTKRIrxAztAumHA8V2GCgDJV psql -v workoutid=$wid -v updateDate=$updateDate -h dpg-ch1fcrceoogo6oihajeg-a.oregon-postgres.render.com -U fli mystrava  << FF
+PGPASSWORD=92PpHb5Hfm6xKsuQ4daSZYQMfIkOjULJ psql -v workoutid=$wid -v updateDate=$updateDate -h  dpg-ckgniuuafg7c73dvuv40-a.oregon-postgres.render.com -U fli mystrava_uksj  << FF
 select label, workout_id, distance, start_date from strava2_activity where wid=:'workoutid' order by start_date;
 delete from strava2_distance where workout_id=:'workoutid';
 delete from strava2_lap where workout_id=:'workoutid';
