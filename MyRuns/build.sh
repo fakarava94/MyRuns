@@ -9,6 +9,8 @@ python manage.py collectstatic --no-input
 python manage.py makemigrations strava2
 python manage.py migrate 
 
+npm init stencil
+
 #python manage.py shell << FF
 #from django.contrib.auth import get_user_model
 #User = get_user_model()
