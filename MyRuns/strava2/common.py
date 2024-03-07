@@ -15,7 +15,7 @@ def getRefreshedToken(client_id, client_secret, access_token):
                     client = Client()
                     refresh_response = client.refresh_access_token(client_id, client_secret,access_token['refresh_token'])
                     log.info('  refresh_response=%s', refresh_response)
-                    strUser = StravaUser(uid=client.get_athlete().id)
+                    strUser = StravaUser.objects.filter(uid=client.get_athlete().id)
                     strUser.update(token=refresh_response['access_token'], refresh_token=refresh_response['refresh_token'],token_expires_at=refresh_response['expires_at'])
                     return refresh_response
                 else:
